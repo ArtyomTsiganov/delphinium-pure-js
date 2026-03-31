@@ -20,3 +20,203 @@
   --radius-md: 8px;
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    margin: 0;
+    padding: 0;
+    font-family: system-ui, -apple-system, sans-serif;
+    line-height: 1.5;
+}
+
+.hero {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    
+    display: flex;
+    align-items: center;
+    padding: 20px 20px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.hero-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 60px;
+}
+
+.hero-text {
+    flex: 1;
+    max-width: 500px;
+}
+
+.hero-title {
+    font-size: 48px;
+    margin-bottom: 24px;
+    font-weight: 400;
+}
+
+.hero-description {
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 40px;
+    opacity: 0.9;
+}
+
+.hero-controls {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+}
+
+.btn-primary {
+    background-color: var(--color-primary-soft);
+    color: var(--color-primary);
+    padding: 18px 48px;
+    text-decoration: none;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.btn-secondary {
+    color: var(--color-white);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.arrow {
+    font-size: 20px;
+}
+
+.hero-visual {
+    flex: 1;
+    position: relative;
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    position: relative;
+    z-index: 2;
+}
+
+.gallery-column {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.card {
+    position: relative;
+    overflow: hidden;
+}
+
+.card-sm {
+    height: 220px;
+}
+
+.card-lg {
+    height: 460px;
+    background-color: var(--color-primary-dark);
+}
+
+.card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: rgba(0, 0, 0, 0.4);
+    color: var(--color-white);
+    padding: 4px 12px;
+    font-size: 12px;
+    z-index: 3;
+}
+
+.card-overlay-text {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-weight: bold;
+    padding: 0 10px;
+}
+
+.card-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 20px;
+    background: linear-gradient(transparent, rgba(0,0,0,0.8));
+}
+
+.card-content h3 {
+    margin: 0 0 8px 0;
+    font-size: 22px;
+}
+
+.card-content p {
+    font-size: 13px;
+    margin-bottom: 20px;
+    opacity: 0.8;
+}
+
+.btn-card {
+    display: block;
+    background-color: var(--color-white);
+    color: var(--color-primary);
+    text-align: center;
+    padding: 12px;
+    text-decoration: none;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.dots-decoration {
+    position: absolute;
+    bottom: -30px;
+    left: -30px;
+    width: 100px;
+    height: 100px;
+    background-image: radial-gradient(var(--color-primary-soft) 1.5px, transparent 1.5px);
+    background-size: 10px 10px;
+    opacity: 0.5;
+    z-index: 1;
+}
+
+@media (max-width: 900px) {
+    .hero-inner {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .hero-text {
+        max-width: 100%;
+    }
+    
+    .hero-controls {
+        justify-content: center;
+    }
+}

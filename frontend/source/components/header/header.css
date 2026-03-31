@@ -1,3 +1,31 @@
-.header-placeholder {
+.header-containter {
+    background-color: var(--color-primary);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 8px 32px;
+}
+
+.header-group {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     
+    width: 300px;
+}
+
+.left {
+    justify-content: left;
+}
+
+.right {
+    justify-content: right;
+}
+
+.header-item {
+    color: var(--color-white);
+    padding: 16px 24px;
+    font-family: 'DM Sans', sans-serif;
+    text-decoration: none;
+    font-weight: 500;
 }
