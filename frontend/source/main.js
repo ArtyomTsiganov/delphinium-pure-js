@@ -20,20 +20,25 @@ const api = {
         return response.json();
     }
 };
-async function loadCards(elementId, count=1, order_by="id") {
+async function loadCards(elementId, params) {
     const container = document.querySelector(elementId);
     const cardTemplate = document.querySelector('#product-card-template');
+    container.querySelectorAll('.product-card').forEach(card => card.remove());
     try {
-        const cards = await api.get('/cards', { count: count, order_by: order_by });
+        const cards = await api.get('/cards', params);
         cards.forEach(card => {
             const clone = cardTemplate.content.cloneNode(true);
             clone.id = card.id;
             clone.querySelector('a').href = card.href;
-            clone.querySelector('img').setAttribute('src', card.image);
-            clone.querySelector('img').setAttribute('alt', '📷');
-            clone.querySelector('.product-card-title').textContent(card.name);
-            clone.querySelector('.product-card-price').textContent(card.price);
-            clone.querySelector('button').setAttribute();
+            if (!card.image) {
+                clone.querySelector('img').setAttribute('src', "assets/product-card-img-demo.png");
+            } else {
+                clone.querySelector('img').setAttribute('src', card.image);
+            }
+            clone.querySelector('img').setAttribute('alt', '0');
+            clone.querySelector('.product-card-title').textContent = card.name;
+            clone.querySelector('.product-card-price').textContent = card.price;
+            clone.querySelector('button');
             container.appendChild(clone);
         });
     } catch (error) {
@@ -41,9 +46,16 @@ async function loadCards(elementId, count=1, order_by="id") {
     }
 }
 
-async function loadBlock() {
-    await loadCards('#recommended-rolling', 7, 'random');
-    await loadCards('#books-rolling', 3, 'random');
+export async function loadBlock() {
+    await loadCards('#recommended-rolling', { count: 9, orderBy: 'random'});
+    await loadCards('#books-rolling', { count: 3, orderBy: 'random'});
 }
 
-document.addEventListener('DOMContentLoaded', loadBlock);
+export async function loadBlockCatalog() {
+    await loadCards('#recommended-products', { count: 1000, orderBy: 'name' });
+}
+
+export async function loadSearch() {
+    const searchInput = document.getElementById('searcher-line');
+    loadCards('#recommended-products', { count: 1000, orderBy: 'name', name_filter:  searchInput.value});
+}

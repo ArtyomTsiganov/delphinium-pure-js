@@ -319,8 +319,11 @@ body {
 
     .catalog-list {
         display: inline-flex;
-        width: stretch;
-        -webkit-overflow-scrolling: touch;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        gap: 8px;
+
+        width: 100%;
 
         padding: 0 var(--padding-primary) 0 var(--padding-primary);
 

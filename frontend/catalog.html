@@ -6,6 +6,27 @@
     <title>Дельфиниум.рф</title>
     <link rel="stylesheet" href="source/main.css">
     <script type="module" src="source/main.js"></script>
+    <script type="module">
+        import { loadBlockCatalog, loadSearch} from './source/main.js';
+        
+        document.addEventListener('DOMContentLoaded', loadBlockCatalog);
+
+        document.addEventListener('DOMContentLoaded', () => {
+        const btn = document.getElementById('searcher-btn');
+        const input = document.getElementById('searcher-line');
+
+        if (btn) {
+            btn.addEventListener('click', loadSearch);
+        }
+
+        // Бонус: поиск по нажатию Enter
+        if (input) {
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') loadSearch();
+            });
+        }
+    });
+    </script>
 </head>
 <body>
 <div class="searcher-zone">
@@ -15,11 +36,11 @@
 
 <div class="catalog-zone">
     <div class="rolling-header">
-        <p>Рекомендуемые товары</p>
-        <button class="rolling-view-all-btn">посмотреть все</button>
+        <p>Цветы</p>
+      
     </div>
 
-    <div class="catalog-list">
+    <div id="recommended-products" class="catalog-list">
         <template id="product-card-template">
             <div class="product-card">
                 <a href="">

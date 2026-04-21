@@ -6,6 +6,11 @@
     <title>Дельфиниум.рф</title>
     <link rel="stylesheet" href="source/main.css">
     <script type="module" src="source/main.js"></script>
+    <script type="module">
+        import { loadBlock } from './source/main.js';
+    
+        document.addEventListener('DOMContentLoaded', loadBlock);
+    </script>
 </head>
 <body>
 <section class="hero">
