@@ -6,58 +6,6 @@
     <title>Дельфиниум.рф</title>
     <link rel="stylesheet" href="source/main.css">
     <script type="module" src="source/main.js"></script>
-    <script>
-        const api = {
-            async get(endpoint, params = {}) {
-                const url = new URL(`http://127.0.0.1:8000${endpoint}`);
-                Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
-
-                const response = await fetch(url);
-                if (!response.ok) throw new Error('API Error');
-                return response.json();
-            }
-        };
-        async function loadCards(element, count=1, order_by="id") {
-            const container = document.querySelector(element);
-
-            try {
-                const cards = await api.get('/cards', { count: count, order_by: order_by });
-
-                container.innerHTML = '';
-
-                cards.forEach(card => {
-                    const cardHtml = `
-                        <div class="rolling-list-item">
-                            <a href="/product/${card.id}">
-                                <img src="${card.image_url || 'assets/product-card-img-demo.png'}">
-                                <p class="rolling-list-item-title">${card.name}</p>
-                            </a>
-                            <div class="rolling-list-item-price">
-                                <p>${card.price} ₽</p>
-                                <button class="rolling-list-item-btn" data-id="${card.id}">В Корзину</button>
-                            </div>
-                        </div>
-                    `;
-                    container.insertAdjacentHTML('beforeend', cardHtml);
-                });
-
-            } catch (error) {
-                console.error('Ошибка:', error);
-            }
-        }
-
-    async function loadBlock() {
-        await loadCards('#recommended-rolling', count = 7, order_by='random');
-        await loadCards('#books-rolling', count = 3, order_by='random');
-    }
-
-    document.addEventListener('DOMContentLoaded', loadBlock);
-
-
-    </script>
-
-
-
 </head>
 <body>
 <section class="hero">
@@ -126,26 +74,18 @@
     <div id="recommended-rolling" class="rolling-list">
         <button class="rolling-left-btn">←</button>
         <button class="rolling-right-btn">→</button>
-        <!-- сюда можно скелет вставить -->
-        <!-- <div class="rolling-list-item">
-    <div class="rolling-list">
-        <button class="rolling-left-btn">←</button>
-        <button class="rolling-right-btn">→</button>
-        <div class="rolling-list-item">
-            <a href="https://localhost">
-                <img src="assets/product-card-img-demo.png">
-                <p class="rolling-list-item-title">Цветик</p>
-            </a>
-            <div class="rolling-list-item-price">
-                <p>price типо</p>
-                <button class="rolling-list-item-btn">В Корзину</button>
+        <template id="product-card-template">
+            <div class="product-card">
+                <a href="">
+                    <img src="" alt="">
+                    <p class="product-card-title"></p>
+                </a>
+                <div class="product-card-bottom">
+                    <p class="product-card-price"></p>
+                    <button>В Корзину</button>
+                </div>
             </div>
-        </div>
-        <div class="rolling-list-item">.</div>
-        <div class="rolling-list-item">.</div>
-        <div class="rolling-list-item">.</div>
-        <div class="rolling-list-item">.</div>
-        <div class="rolling-list-item">.</div> -->
+        </template>
     </div>
 </div>
 

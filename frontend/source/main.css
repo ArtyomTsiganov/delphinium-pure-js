@@ -287,43 +287,43 @@ body {
             justify-self: flex-end;
             font-family: "JetBrains Mono ExtraBold", sans-serif;
         }
-        
-        .rolling-list-item {
-            margin: 5px;
-            min-width: 280px !important;
-            height: stretch;
-            border: 1px solid var(--color-primary);
-            
-            a {
-                color: var(--color-primary);
-                text-decoration: none;
-            }
-            
-            img {
-                width: 280px;
-            }
-            
-            p {
-                margin: 0;
-                padding: 5px;
-                font-size: 20px;
-            }
+    }
+}
 
-            button {
-                background-color: var(--color-white);
-                color: var(--color-primary);
-                border: 1px solid var(--color-primary);
-                margin: 0;
-                padding: 0 15px;
-                font-size: 16px;
-            }
-            
-            .rolling-list-item-price {
-                display: inline-flex;
-                justify-content: space-between;
-                width: stretch;
-            }
-        }
+.product-card {
+    margin: 5px;
+    min-width: 280px !important;
+    height: stretch;
+    border: 1px solid var(--color-primary);
+
+    a {
+        color: var(--color-primary);
+        text-decoration: none;
+    }
+
+    img {
+        width: 280px;
+    }
+
+    p {
+        margin: 0;
+        padding: 5px;
+        font-size: 20px;
+    }
+
+    button {
+        background-color: var(--color-white);
+        color: var(--color-primary);
+        border: 1px solid var(--color-primary);
+        margin: 0;
+        padding: 0 15px;
+        font-size: 16px;
+    }
+
+    .product-card-bottom {
+        display: inline-flex;
+        justify-content: space-between;
+        width: stretch;
     }
 }
 
