@@ -1,0 +1,38 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Дельфиниум.рф</title>
+    <link rel="stylesheet" href="source/main.css">
+    <script type="module" src="source/main.js"></script>
+</head>
+<body>
+<div class="searcher-zone">
+    <input id="searcher-line" class="searcher-line" placeholder="Search flowers...">
+    <button id="searcher-btn" class="searcher-btn">🔍</button>
+</div>
+
+<div class="catalog-zone">
+    <div class="rolling-header">
+        <p>Рекомендуемые товары</p>
+        <button class="rolling-view-all-btn">посмотреть все</button>
+    </div>
+
+    <div class="catalog-list">
+        <template id="product-card-template">
+            <div class="product-card">
+                <a href="">
+                    <img src="" alt="">
+                    <p class="product-card-title"></p>
+                </a>
+                <div class="product-card-bottom">
+                    <p class="product-card-price"></p>
+                    <button>В Корзину</button>
+                </div>
+            </div>
+        </template>
+    </div>
+</div>
+</body>
+</html>
