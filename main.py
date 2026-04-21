@@ -61,6 +61,12 @@ def get_cards(
     return query.limit(count).all()
 
 
+
+# получить карточки товара
+@app.get("/cards/category")
+def get_category(db: Session = Depends(get_db)):
+    return db.query(Categories).all()
+
 # Забронировать товар на n минут
 @app.post("/cards/book")
 def read_item(card_id: list[int] = Query(None), db: Session = Depends(get_db)):
