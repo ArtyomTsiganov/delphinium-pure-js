@@ -2,12 +2,13 @@ from decimal import Decimal
 from typing import Optional
 
 from fastapi import FastAPI, Query, HTTPException
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from .app.database import engine, Base, get_db
 from .app.models import Cards
-
+from fastapi.staticfiles import StaticFiles
 from random import shuffle
 
 Base.metadata.create_all(bind=engine)
@@ -105,8 +106,7 @@ def add_cards(cards_in: list[CardCreate], db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail=f"Database error: {str(e)}")
 
 
-
-
-
-
-
+app.mount("", StaticFiles(directory="frontend", html=True), name="frontend")
+@app.get("/")
+def read_index():
+    return FileResponse('frontend/index.html')
