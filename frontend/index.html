@@ -11,7 +11,7 @@
             async get(endpoint, params = {}) {
                 const url = new URL(`http://127.0.0.1:8000${endpoint}`);
                 Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
-                
+
                 const response = await fetch(url);
                 if (!response.ok) throw new Error('API Error');
                 return response.json();
@@ -124,22 +124,23 @@
     </div>
     
     <div id="recommended-rolling" class="rolling-list">
-
+        <button class="rolling-left-btn">←</button>
+        <button class="rolling-right-btn">→</button>
         <!-- сюда можно скелет вставить -->
         <!-- <div class="rolling-list-item">
+    <div class="rolling-list">
+        <button class="rolling-left-btn">←</button>
+        <button class="rolling-right-btn">→</button>
+        <div class="rolling-list-item">
             <a href="https://localhost">
                 <img src="assets/product-card-img-demo.png">
                 <p class="rolling-list-item-title">Цветик</p>
             </a>
             <div class="rolling-list-item-price">
-                <p>price</p>
+                <p>price типо</p>
                 <button class="rolling-list-item-btn">В Корзину</button>
             </div>
         </div>
-
-        <script>
-
-        </script>
         <div class="rolling-list-item">.</div>
         <div class="rolling-list-item">.</div>
         <div class="rolling-list-item">.</div>
@@ -155,6 +156,8 @@
     </div>
 
     <div id="books-rolling" class="rolling-list">
+        <button class="rolling-left-btn">←</button>
+        <button class="rolling-right-btn">→</button>
         <!-- Сюда книжки вставяться автоматом-->
     </div>
 </div>

@@ -269,10 +269,24 @@ body {
     .rolling-list {
         display: inline-flex;
         width: stretch;
+        
+        overflow-y: hidden;
         overflow-x: scroll;
         scrollbar-width: none;
         white-space: nowrap;
+        overscroll-behavior: none;
+        -webkit-overflow-scrolling: touch;
+        
         padding: 0 0 0 var(--padding-primary);
+        
+        
+        .rolling-left-btn {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-self: flex-end;
+            font-family: "JetBrains Mono ExtraBold", sans-serif;
+        }
         
         .rolling-list-item {
             margin: 5px;
