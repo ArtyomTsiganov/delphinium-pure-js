@@ -77,20 +77,11 @@
     </div>
     
     <div id="recommended-rolling" class="rolling-list">
-        <button class="rolling-left-btn">←</button>
-        <button class="rolling-right-btn">→</button>
-        <template id="product-card-template">
-            <div class="product-card">
-                <a href="">
-                    <img src="" alt="">
-                    <p class="product-card-title"></p>
-                </a>
-                <div class="product-card-bottom">
-                    <p class="product-card-price"></p>
-                    <button>В Корзину</button>
-                </div>
-            </div>
-        </template>
+        <div class="rolling-buttons">
+            <button class="rolling-btn">←</button>
+            <button class="rolling-btn">→</button>
+        </div>
+        <!-- сюда рекомендации вставятся автоматом -->
     </div>
 </div>
 
@@ -101,10 +92,28 @@
     </div>
 
     <div id="books-rolling" class="rolling-list">
-        <button class="rolling-left-btn">←</button>
-        <button class="rolling-right-btn">→</button>
+        <div class="rolling-buttons">
+            <button class="rolling-btn">←</button>
+            <button class="rolling-btn">→</button>
+        </div>
         <!-- Сюда книжки вставяться автоматом-->
     </div>
 </div>
 </body>
+
+<!-- Отсюда начинаются шаблоны -->
+
+<template id="product-card-template">
+    <div class="product-card">
+        <a href="">
+            <img src="" alt="">
+            <p class="product-card-title"></p>
+        </a>
+        <div class="product-card-bottom">
+            <p class="product-card-price"></p>
+            <button>В Корзину</button>
+        </div>
+    </div>
+</template>
+
 </html>

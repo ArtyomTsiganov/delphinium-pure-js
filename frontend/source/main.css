@@ -280,12 +280,31 @@ body {
         padding: 0 0 0 var(--padding-primary);
         
         
-        .rolling-left-btn {
-            position: absolute;
+        .rolling-buttons {
             display: flex;
-            align-items: center;
-            justify-self: flex-end;
-            font-family: "JetBrains Mono ExtraBold", sans-serif;
+            position: absolute;
+            width: stretch;
+            align-self: center;
+            justify-content: space-between;
+            padding: 0 var(--padding-primary) 0 0;
+            
+            
+            .rolling-btn {
+                display: inline-flex;
+                border: 1px solid var(--color-primary);
+                border-radius: 50%;
+                background-color: var(--color-primary-soft);
+                color: var(--color-primary);
+                height: 40px;
+                width: 40px;
+                font-size: 20px;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .rolling-right-btn {
+                display: inline;
+            }
         }
     }
 }
@@ -342,7 +361,7 @@ body {
     margin: 5px;
     min-width: 280px !important;
     height: stretch;
-    border: 1px solid var(--color-primary);
+    border: none;
 
     a {
         color: var(--color-primary);
