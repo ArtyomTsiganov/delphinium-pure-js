@@ -95,13 +95,13 @@ categories = [
   {
     "category_id": 2,
     "name": "books"
-  },`
+  },
   {
     "category_id": 3,
     "name": "dirt"
   }
 ]
 
-# response = requests.post('http://127.0.0.1:8000/cards/category', json=categories)
+response = requests.post('http://127.0.0.1:8000/cards/category', json=categories)
 print(response.status_code)
 print(response.json())
