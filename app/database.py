@@ -1,23 +1,31 @@
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
+from sqlalchemy.orm import DeclarativeBase
 
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+# тестовый конфиг на sqllite чтобы успеть к дедлайну переделать бы на postgres
+# все скопировано с хабра ))))
 
+SQLALCHEMY_DATABASE_URL = "sqlite+aiosqlite:///./sql_app.db"
 
-# тестовый конфиг на sqllite чтобы успеть к дедлайну
-SQLALCHEMY_DATABASE_URL = "sqlite:///./sql_app.db"
-
-engine = create_engine(
+engine = create_async_engine(
     SQLALCHEMY_DATABASE_URL,
-    connect_args={"check_same_thread": False} if "sqlite" in SQLALCHEMY_DATABASE_URL else {}
+    connect_args={"check_same_thread": False} # Нужно только для SQLite
 )
 
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-Base = declarative_base()
+# 2. Создаем фабрику асинхронных сессий.
+# expire_on_commit=False — важная настройка для async, чтобы объекты не "протухали" после комита.
+AsyncSessionLocal = async_sessionmaker(
+    bind=engine,
+    class_=AsyncSession,
+    expire_on_commit=False
+)
 
-def get_db():
-    db = SessionLocal()
-    try:
+class Base(DeclarativeBase):
+    pass
+
+
+# Это асинхронный генератор.
+async def get_db():
+    # Используем async with — это гарантирует, что сессия закроется корректно
+    async with AsyncSessionLocal() as db:
         yield db
-    finally:
-        db.close()
+
