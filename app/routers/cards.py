@@ -4,10 +4,9 @@ from fastapi import APIRouter, Depends, Query, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.cards import Cards, Categories
+from app.models import Cards, Categories
 from app.schemas.cards import CardCreate, CategoryCreate
 from app.database import get_db
-
 
 
 router = APIRouter(
@@ -69,14 +68,6 @@ async def get_cards(
     result = await db.execute(query)
     return result.scalars().all()
 
-
-# Забронировать товар на n минут
-@router.post("/book")
-async def read_item(
-        card_id: list[int] = Query(None),
-        db: AsyncSession = Depends(get_db)
-):
-    raise NotImplementedError()
 
 @router.post("/category", status_code=201)
 async def add_category(

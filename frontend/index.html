@@ -25,7 +25,7 @@
                 </p>
                 <div class="hero-controls">
                     <a href="catalog.html" class="btn-primary">К каталогу</a>
-                    <a href="#" class="btn-secondary">
+                    <a href="blog.html" class="btn-secondary">
                         <span>К статьям</span>
                         <span class="arrow">→</span>
                     </a>
@@ -73,12 +73,12 @@
 <div class="rolling-zone">
     <div class="rolling-header">
         <p>Рекомендуемые товары</p>
-        <button class="rolling-view-all-btn">посмотреть все</button>
+        <button onclick="location.href='catalog.html'" class="rolling-view-all-btn">посмотреть все</button>
     </div>
     
     <div id="recommended-rolling" class="rolling-list">
-        <button class="rolling-left-btn">←</button>
-        <button class="rolling-right-btn">→</button>
+        <!-- <button class="rolling-left-btn">←</button>
+        <button class="rolling-right-btn">→</button> -->
         <template id="product-card-template">
             <div class="product-card">
                 <a href="">
@@ -87,7 +87,7 @@
                 </a>
                 <div class="product-card-bottom">
                     <p class="product-card-price"></p>
-                    <button>В Корзину</button>
+                    <button >В Корзину</button>
                 </div>
             </div>
         </template>
@@ -101,8 +101,8 @@
     </div>
 
     <div id="books-rolling" class="rolling-list">
-        <button class="rolling-left-btn">←</button>
-        <button class="rolling-right-btn">→</button>
+        <!-- <button class="rolling-left-btn">←</button>
+        <button class="rolling-right-btn">→</button> -->
         <!-- Сюда книжки вставяться автоматом-->
     </div>
 </div>
