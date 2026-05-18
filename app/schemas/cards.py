@@ -1,10 +1,11 @@
 from pydantic import BaseModel
+
 from decimal import Decimal
 from typing import List, Optional
 
 
-class CardCreate(BaseModel):
-    card_id: int
+###################################### BASE
+class CardBase(BaseModel):
     name: str
     short_name: Optional[str] = None
     price: Decimal
@@ -12,13 +13,31 @@ class CardCreate(BaseModel):
     count: int
     description: str
     image_url: str
+
+
+class CategoryBase(BaseModel):
+    name: str
+
+
+###################################### CREATE
+class CardCreate(CardBase):
+    pass
+
+
+class CategoryCreate(CategoryBase):
+    pass
+
+###################################### RESPONSE
+
+class CategoryResponse(CategoryBase):
+    category_id: int
+
     class Config:
         from_attributes = True
 
 
-class CategoryCreate(BaseModel):
-    category_id: int
-    name: str
+class CardResponse(CardBase):
+    card_id: int
 
     class Config:
         from_attributes = True

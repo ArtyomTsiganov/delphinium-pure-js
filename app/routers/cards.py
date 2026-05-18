@@ -5,24 +5,30 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import Cards, Categories
-from app.schemas.cards import CardCreate, CategoryCreate
+from app.schemas.cards import CardCreate, CategoryCreate, CategoryResponse, CardResponse
 from app.database import get_db
-
+from app.schemas.schemas import SuccessResponse
 
 router = APIRouter(
     prefix="/cards",
     tags=["Cards"]
 )
 
-# получить карточки товара
-@router.get("/category")
+# получить категории товаров
+@router.get(
+    "/category",
+    response_model=list[CategoryResponse]
+)
 async def get_category(db: AsyncSession = Depends(get_db)):
     query = select(Categories)
     result = await db.execute(query)
     return result.scalars().all()
 
 # получить карточки товара
-@router.get("")
+@router.get(
+    "",
+    response_model=list[CardResponse]
+)
 async def get_cards(
         card_id: list[int] = Query(None),
         count: int = 1,
@@ -69,7 +75,11 @@ async def get_cards(
     return result.scalars().all()
 
 
-@router.post("/category", status_code=201)
+@router.post(
+    "/category",
+    status_code=201,
+    response_model=SuccessResponse
+)
 async def add_category(
         category_in: list[CategoryCreate],
         db: AsyncSession = Depends(get_db)
@@ -96,7 +106,11 @@ async def add_category(
 
 
 # todo: сделать верификацию по secret key
-@router.post("", status_code=201)
+@router.post(
+    "",
+    status_code=201,
+    response_model=SuccessResponse
+)
 async def add_cards(
         cards_in: list[CardCreate],
         db: AsyncSession = Depends(get_db)
