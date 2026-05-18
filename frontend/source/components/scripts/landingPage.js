@@ -2,20 +2,11 @@ import { loadCards } from "./cards.js";
 import { parseHTML } from "./api.js";
 import { renderMainWith } from "./mainRender.js";
 import { navigateTo } from "./navigation.js";
-import { loadSearch } from "./catalogPage.js";
+import { makeSearcher } from "./searcher.js";
 
-
-async function renderCardsBlocks() {
-    await loadCards('#recommended-rolling', { count: 9, orderBy: 'random', category_filter: 'flowers'});
-    await loadCards('#books-rolling', { count: 3, orderBy: 'random', category_filter: 'books'});
-}
-
-export async function renderLandingPage() {
-    renderMainWith(landingPage);
-    await renderCardsBlocks();
-}
 
 const landingPage = parseHTML(`
+<div class="landingPage">
     <section class="hero">
         <div class="container">
             <div class="hero-inner">
@@ -68,10 +59,7 @@ const landingPage = parseHTML(`
         </div>
     </section>
 
-    <div class="searcher-zone">
-        <input id="searcher-line" class="searcher-line" placeholder="Search flowers...">
-        <button id="searcher-btn" class="searcher-btn">🔍</button>
-    </div>
+    <div class="searcher-zone"></div>
 
     <div class="rolling-zone">
         <div class="rolling-header">
@@ -100,6 +88,7 @@ const landingPage = parseHTML(`
             <!-- Сюда книжки вставяться автоматом-->
         </div>
     </div>
+</div>
 `);
 
 for (const roll of landingPage.querySelectorAll(".rolling-zone")) {
@@ -111,18 +100,21 @@ for (const roll of landingPage.querySelectorAll(".rolling-zone")) {
         rollingList.scrollBy({left: 580, behavior: "smooth"});
     })
 }
+const { searcherBtn, searcherLine } = makeSearcher();
+const searchingZone = landingPage.querySelector(".searcher-zone");
+searchingZone.appendChild(searcherLine);
+searchingZone.appendChild(searcherBtn);
 
-function goSearchCatalog() {
-    const value = landingPage.querySelector("#searcher-line").value;
-    navigateTo("/catalog");
-    document.querySelector("#searcher-line").value = value;
-    loadSearch();
+const recommendedCatalog = landingPage.querySelector('#recommended-rolling');
+const booksCatalog = landingPage.querySelector('#books-rolling');
+
+async function renderCardsBlocks() {
+    await loadCards(recommendedCatalog, { count: 9, orderBy: 'random', category_filter: 'flowers'});
+    await loadCards(booksCatalog, { count: 3, orderBy: 'random', category_filter: 'books'});
 }
 
-landingPage.querySelector("#searcher-line").addEventListener("keydown", e => {
-    if (e.key === "Enter") {
-        goSearchCatalog();
-    }
-});
-
-landingPage.querySelector("#searcher-btn").addEventListener("click", goSearchCatalog);
+export async function renderLandingPage() {
+    renderMainWith(landingPage);
+    console.log(landingPage);
+    await renderCardsBlocks();
+}

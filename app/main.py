@@ -17,18 +17,17 @@ app.include_router(orders.router)
 # Сделать функционал заказов
 # БД: https://drawsql.app/teams/artyomtsiganov/diagrams/shop-datebase
 
+app.mount("/source", StaticFiles(directory="frontend/source"), name="source")
+app.mount("/assets", StaticFiles(directory="frontend/assets"), name="assets")
 
-app.mount("", StaticFiles(directory="frontend", html=True), name="frontend")
-@app.get("/catalog")
-def read_catalog():
-    return FileResponse('../frontend/catalog.html')
-
-app.mount("", StaticFiles(directory="frontend", html=True), name="frontend")
-@app.get("/blog")
-def read_blog():
-    return FileResponse('../frontend/blog.html')
-
-app.mount("", StaticFiles(directory="frontend", html=True), name="frontend")
 @app.get("/")
 def read_index():
-    return FileResponse('../frontend/index.html')
+    return FileResponse('frontend/index.html')
+
+
+@app.get("/{catchall:path}")
+def read_other_paths(catchall: str):
+    return FileResponse('frontend/index.html')
+    
+
+app.mount("/", StaticFiles(directory="frontend"), name="frontend")

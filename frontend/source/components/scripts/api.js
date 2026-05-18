@@ -13,5 +13,5 @@ export const api = {
 export function parseHTML(htmlString) {
     const parsingTemplate = document.createElement('template');
     parsingTemplate.innerHTML = htmlString.trim();
-    return parsingTemplate.content.cloneNode(true);
+    return parsingTemplate.content.firstChild;
 }
