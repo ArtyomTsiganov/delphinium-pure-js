@@ -72,6 +72,29 @@ async def test_add_cards(client):
     assert data["status"] == "success"
 
 async def test_get_cards_with_filter(client):
+    await client.post(
+        "/cards/category",
+        json=[
+            {
+                "name": "Phones"
+            }
+        ]
+    )
+
+    response = await client.post(
+        "/cards",
+        json=[
+            {
+                "name": "iPhone 15",
+                "category_id": 1,
+                "short_name": "iphone",
+                "price": 1000,
+                "count": 5,
+                "description": "Apple phone",
+                "image_url": "test.jpg"
+            }
+        ]
+    )
 
     response = await client.get(
         "/cards",
