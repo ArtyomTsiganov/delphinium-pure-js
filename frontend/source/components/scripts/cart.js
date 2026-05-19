@@ -1,5 +1,5 @@
 const loadedCart = localStorage.getItem("cart");
-let cart = loadedCart ? new Map(JSON.parse(loadedCart)) : new Map();
+export const cart = loadedCart ? new Map(JSON.parse(loadedCart)) : new Map();
 
 function saveCart() {
     localStorage.setItem("cart", JSON.stringify([...cart.entries()]));

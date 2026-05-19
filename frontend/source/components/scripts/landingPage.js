@@ -108,6 +108,8 @@ searchingZone.appendChild(searcherBtn);
 const recommendedCatalog = landingPage.querySelector('#recommended-rolling');
 const booksCatalog = landingPage.querySelector('#books-rolling');
 
+landingPage.querySelectorAll('.rolling-view-all-btn').forEach(a => a.addEventListener('click', e => { navigateTo('/catalog') }));
+
 async function renderCardsBlocks() {
     await loadCards(recommendedCatalog, { count: 9, orderBy: 'random', category_filter: 'flowers'});
     await loadCards(booksCatalog, { count: 3, orderBy: 'random', category_filter: 'books'});
@@ -115,6 +117,5 @@ async function renderCardsBlocks() {
 
 export async function renderLandingPage() {
     renderMainWith(landingPage);
-    console.log(landingPage);
     await renderCardsBlocks();
 }

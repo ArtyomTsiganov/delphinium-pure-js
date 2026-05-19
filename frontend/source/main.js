@@ -16,4 +16,4 @@ setRoutes({
 
 document.querySelector('#header-catalog').addEventListener("click", () => navigateTo('/catalog'));
 document.querySelector('#header-blog').addEventListener("click", () => navigateTo('/blog'));
-document.querySelector('#header-profile').addEventListener("click", () => navigateTo('/profile'));
+document.querySelector('#header-profile').addEventListener("click", () => navigateTo('/cart'));
