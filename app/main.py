@@ -22,7 +22,6 @@ app.include_router(orders.router)
 app.mount("/source", StaticFiles(directory="frontend/source"), name="source")
 app.mount("/assets", StaticFiles(directory="frontend/assets"), name="assets")
 
-
 @app.get("/")
 def read_index():
     return FileResponse('frontend/index.html')
@@ -31,7 +30,7 @@ def read_index():
 @app.get("/{catchall:path}")
 def read_other_paths(catchall: str):
     return FileResponse('frontend/index.html')
-
+    
 
 app.mount("/", StaticFiles(directory="frontend"), name="frontend")
 
