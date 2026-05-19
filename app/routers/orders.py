@@ -111,3 +111,25 @@ async def checkout_order(
     await db.refresh(order, attribute_names=["card_associations"])
     return order
 
+@router.put(
+    "/{order_id}/change",
+    response_model = OrderResponse
+)
+async def checkout_order(
+        order_id: int,
+        new_status: OrderStatus,
+        db: AsyncSession = Depends(get_db)
+):
+    order = await db.get(
+        Orders,
+        order_id,
+        options=[selectinload(Orders.card_associations)]
+    )
+    if not order:
+        raise HTTPException(status_code=400, detail="Заказ не найден или не зарезервирован")
+
+    order.status = new_status
+
+    await db.commit()
+    await db.refresh(order, attribute_names=["card_associations"])
+    return order

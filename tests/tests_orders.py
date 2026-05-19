@@ -291,3 +291,136 @@ async def test_get_order_items_after_creation(client):
     assert item["card_id"] == 1
     assert item["count"] == 2
     assert float(item["price"]) == 1000.0
+
+
+async def test_change_order_status(client):
+
+    await prepare_card(client)
+
+    # создаём заказ
+    create_response = await client.post(
+        "/orders/",
+        json=[
+            {
+                "card_id": 1,
+                "count": 1
+            }
+        ]
+    )
+
+    assert create_response.status_code == 200
+
+    order_id = create_response.json()["order_id"]
+
+    # меняем статус
+    response = await client.put(
+        f"/orders/{order_id}/change",
+        params={
+            "new_status": "completed"
+        }
+    )
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert data["order_id"] == order_id
+    assert data["status"] == "completed"
+
+
+
+async def test_change_order_status_multiple_times(client):
+
+    await prepare_card(client)
+
+    # создаём заказ
+    create_response = await client.post(
+        "/orders/",
+        json=[
+            {
+                "card_id": 1,
+                "count": 1
+            }
+        ]
+    )
+
+    order_id = create_response.json()["order_id"]
+
+    # RESERVED -> COMPLETED
+    response1 = await client.put(
+        f"/orders/{order_id}/change",
+        params={
+            "new_status": "completed"
+        }
+    )
+
+    assert response1.status_code == 200
+
+    assert response1.json()["status"] == "completed"
+
+    # COMPLETED -> SHIPPING
+    response2 = await client.put(
+        f"/orders/{order_id}/change",
+        params={
+            "new_status": "shipping"
+        }
+    )
+
+    assert response2.status_code == 200
+
+    assert response2.json()["status"] == "shipping"
+
+    # SHIPPING -> DELIVERED
+    response3 = await client.put(
+        f"/orders/{order_id}/change",
+        params={
+            "new_status": "delivered"
+        }
+    )
+
+    assert response3.status_code == 200
+
+    assert response3.json()["status"] == "delivered"
+
+
+async def test_change_order_status_invalid_enum(client):
+
+    await prepare_card(client)
+
+    create_response = await client.post(
+        "/orders/",
+        json=[
+            {
+                "card_id": 1,
+                "count": 1
+            }
+        ]
+    )
+
+    order_id = create_response.json()["order_id"]
+
+    response = await client.put(
+        f"/orders/{order_id}/change",
+        params={
+            "new_status": "some_weird_status"
+        }
+    )
+
+    # FastAPI validation error
+    assert response.status_code == 422
+
+
+async def test_change_order_status_invalid_order(client):
+
+    response = await client.put(
+        "/orders/999/change",
+        params={
+            "new_status": "completed"
+        }
+    )
+
+    assert response.status_code == 400
+
+    data = response.json()
+
+    assert "не найден" in data["detail"]
