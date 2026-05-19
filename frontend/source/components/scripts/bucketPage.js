@@ -1,6 +1,6 @@
 import { api, parseHTML} from "./api.js";
 import { renderMainWith } from "./mainRender.js";
-import { cart } from "./cart.js";
+import {cart, removeFromCartAll} from "./cart.js";
 
 
 const cartListItem = parseHTML(`
@@ -130,17 +130,19 @@ const cartPage = parseHTML(`
 const cartList = cartPage.querySelector('.cart-items-list');
 
 async function loadCart() {
-    const cards = await api.get('/cards', { card_id: cart.entries().map(item => item[1]) });
+    const cards = await api.get('/cards', { card_id: cart.entries().map(item => item[0]).toArray() });
     cards.forEach(card => {
         const clone = cartListItem.cloneNode(true);
         clone.id = cart.id;
-        clone.querySelector('.cart-item-title').innerText = cart.name;
+        clone.querySelector('.cart-item-title').textContent = card.name;
         if (!card.image) {
             clone.querySelector('.cart-item-img').setAttribute('src', "/assets/product-card-img-demo.png");
         } else {
             clone.querySelector('.cart-item-img').setAttribute('src', card.image);
         }
-        clone.querySelector('.col-price').innerText = cart.price;
+        clone.querySelector('.col-price').textContent = card.price;
+        clone.querySelector('.delete-btn').addEventListener('click', () => removeFromCartAll(card.card_id))
+        cartList.append(clone);
     })
 }
 

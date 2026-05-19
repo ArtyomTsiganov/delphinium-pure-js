@@ -21,7 +21,7 @@ export async function loadCards(container, params) {
         const cards = await api.get('/cards', params);
         cards.forEach(card => {
             const clone = cardTemplate.cloneNode(true);
-            clone.id = card.id;
+            clone.id = card.card_id;
             clone.querySelector('a').href = card.href;
             if (!card.image) {
                 clone.querySelector('img').setAttribute('src', "/assets/product-card-img-demo.png");
@@ -31,7 +31,7 @@ export async function loadCards(container, params) {
             clone.querySelector('img').setAttribute('alt', '0');
             clone.querySelector('.product-card-title').textContent = card.name;
             clone.querySelector('.product-card-price').textContent = card.price;
-            clone.querySelector('button').addEventListener('click', () => addToCartOne(card.id));
+            clone.querySelector('button').addEventListener('click', () => addToCartOne(card.card_id));
             clone.querySelector('a').addEventListener('click', e => {
                 e.preventDefault();
                 navigateTo(`/product`, card);        //?id=${card.id}`, card);
