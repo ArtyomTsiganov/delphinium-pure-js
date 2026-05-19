@@ -1,28 +1,13 @@
 import { loadCards } from "./cards.js";
 import { parseHTML } from "./api.js";
 import { renderMainWith } from "./mainRender.js";
+import { navigateTo } from "./navigation.js";
+import { makeSearcher } from "./searcher.js";
 
-export async function loadBlockCatalog() {
-    await loadCards('#flowers-block', { count: 1000, orderBy: 'name', category_filter: 'flowers' });
-    await loadCards('#books-block', { count: 1000, orderBy: 'name', category_filter: 'books' });
-}
-
-export async function loadSearch() {
-    const searchInput = document.getElementById('searcher-line');
-    await loadCards('#flowers-block', { count: 1000, orderBy: 'name', name_filter:  searchInput.value});
-    await loadCards('#books-block', { count: 1000, orderBy: 'name', name_filter:  searchInput.value});
-}
-
-export async function renderCatalogPage() {
-    renderMainWith(catalogPage);
-    await loadBlockCatalog();
-}
 
 const catalogPage = parseHTML(`
-    <div class="searcher-zone">
-        <input id="searcher-line" class="searcher-line" placeholder="Search flowers...">
-        <button id="searcher-btn" class="searcher-btn">🔍</button>
-    </div>
+<div class="catalogPage">
+    <div class="searcher-zone"></div>
     
     <div class="catalog-zone">
         <div class="catalog-header">
@@ -39,14 +24,30 @@ const catalogPage = parseHTML(`
             <!-- Сюда книжки вставяться автоматом-->
         </div>
     </div>
+</div>
 `);
 
-catalogPage.querySelector('#searcher-btn').addEventListener('click', async event => {
-    await loadSearch();
-});
+const { searcherBtn, searcherLine } = makeSearcher();
+const searchingZone = catalogPage.querySelector(".searcher-zone");
+searchingZone.appendChild(searcherLine);
+searchingZone.appendChild(searcherBtn);
 
-catalogPage.querySelector("#searcher-line").addEventListener("keydown", async event => {
-    if (event.key === "Enter") {
-        await loadSearch();
+const flowersCatalog = catalogPage.querySelector('#flowers-block');
+const booksCatalog = catalogPage.querySelector('#books-block');
+
+async function loadBlockCatalog() {
+    const state = history.state;
+    if (state?.name_filter) {
+        searcherLine.value = state?.name_filter;
+        await loadCards(flowersCatalog, { count: 1000, orderBy: 'name', category_filter: 'flowers', name_filter:  state.name_filter});
+        await loadCards(booksCatalog, { count: 1000, orderBy: 'name', category_filter: 'books' , name_filter:  state.name_filter});
+    } else {
+        await loadCards(flowersCatalog, { count: 1000, orderBy: 'name', category_filter: 'flowers' });
+        await loadCards(booksCatalog, { count: 1000, orderBy: 'name', category_filter: 'books' });
     }
-});
+}
+
+export async function renderCatalogPage() {
+    renderMainWith(catalogPage);
+    await loadBlockCatalog();
+}

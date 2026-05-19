@@ -1,7 +1,4 @@
-export function renderMainWith(node) {
+export function renderMainWith(container) {
     const collector = document.querySelector("#collector");
-    // const newCollector = collector.cloneNode(false);
-    // newCollector.appendChild(node);
-    // collector.replaceWith(newCollector);
-    collector.replaceChildren(node);
+    collector.replaceChildren(container);
 }
