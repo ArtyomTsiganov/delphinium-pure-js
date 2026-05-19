@@ -83,7 +83,7 @@ cards = [
     "category_id": 1
   }
 ]
-response = requests.post('http://127.0.0.1:8000/cards', json=cards)
+response = requests.post('http://31.129.99.234:8000/cards', json=cards)
 print(response.status_code)
 print(response.json())
 
@@ -102,6 +102,73 @@ categories = [
   }
 ]
 
-response = requests.post('http://127.0.0.1:8000/cards/category', json=categories)
+response = requests.post('http://31.129.99.234:8000/cards/category', json=categories)
 print(response.status_code)
 print(response.json())
+
+import requests
+
+BASE_URL = "http://31.129.99.234:8000"
+
+cards = [
+    {
+        "name": "MacBook Pro 16 M3",
+        "short_name": "MBP16",
+        "price": 249999.99,
+        "category_id": 1,
+        "count": 5,
+        "description": "Мощный ноутбук Apple для разработки и монтажа видео",
+        "image_url": "https://example.com/images/macbook-pro.jpg"
+    },
+    {
+        "name": "iPhone 15 Pro",
+        "short_name": "IPH15PRO",
+        "price": 129999.50,
+        "category_id": 2,
+        "count": 12,
+        "description": "Флагманский смартфон Apple с титановым корпусом",
+        "image_url": "https://example.com/images/iphone15pro.jpg"
+    },
+    {
+        "name": "Samsung Galaxy S25",
+        "short_name": "SGS25",
+        "price": 99999.99,
+        "category_id": 2,
+        "count": 8,
+        "description": "Android смартфон с AMOLED дисплеем и мощной камерой",
+        "image_url": "https://example.com/images/galaxy-s25.jpg"
+    },
+    {
+        "name": "ASUS ROG Strix G18",
+        "short_name": "ROGG18",
+        "price": 189999.00,
+        "category_id": 1,
+        "count": 3,
+        "description": "Игровой ноутбук с RTX 4090 и экраном 240Hz",
+        "image_url": "https://example.com/images/rog-g18.jpg"
+    },
+    {
+        "name": "AirPods Pro 2",
+        "short_name": "AIRPODS2",
+        "price": 24999.90,
+        "category_id": 3,
+        "count": 20,
+        "description": "Беспроводные наушники с активным шумоподавлением",
+        "image_url": "https://example.com/images/airpods-pro2.jpg"
+    }
+]
+
+response = requests.post(
+    f"{BASE_URL}/cards",
+    json=cards,
+    headers={
+        "Content-Type": "application/json"
+    }
+)
+
+print("STATUS:", response.status_code)
+
+try:
+    print("RESPONSE:", response.json())
+except Exception:
+    print("TEXT:", response.text)

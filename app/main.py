@@ -2,6 +2,8 @@ from fastapi.responses import FileResponse
 
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
+
+from app.database import engine, Base
 from app.routers import cards, orders
 
 app = FastAPI(title="very beautiful site")
@@ -32,3 +34,13 @@ def read_other_paths(catchall: str):
 
 
 app.mount("/", StaticFiles(directory="frontend"), name="frontend")
+
+async def init_database():
+    print("Создаем таблицы...")
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    print("Таблицы успешно созданы!")
+
+
+
+init_database()
