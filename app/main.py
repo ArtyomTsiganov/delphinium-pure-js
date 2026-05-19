@@ -1,11 +1,30 @@
+from contextlib import asynccontextmanager
+
 from fastapi.responses import FileResponse
 
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
+
+from app.database import engine, Base
 from app.routers import cards, orders
 
-app = FastAPI(title="very beautiful site")
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    print("Создаем таблицы...")
+
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+
+    print("Таблицы успешно созданы!")
+
+    yield
+
+
+app = FastAPI(
+    title="very beautiful site",
+    lifespan=lifespan
+)
 # Подключение роутеров
 app.include_router(cards.router)
 app.include_router(orders.router)
@@ -31,3 +50,4 @@ def read_other_paths(catchall: str):
     
 
 app.mount("/", StaticFiles(directory="frontend"), name="frontend")
+
