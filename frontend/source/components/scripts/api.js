@@ -9,14 +9,25 @@ export const api = {
         });
 
         const response = await fetch(url);
-        if (!response.ok) throw new Error('API Error');
+        if (!response.ok)
+            throw new Error('API Error');
         return response.json();
     }
 };
-
 
 export function parseHTML(htmlString) {
     const parsingTemplate = document.createElement('template');
     parsingTemplate.innerHTML = htmlString.trim();
     return parsingTemplate.content.firstChild;
+}
+
+export function toMoney(value) {
+    const number = parseFloat(value) || 0;
+
+    return new Intl.NumberFormat('ru-RU', {
+        style: 'currency',
+        currency: 'RUB',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2,
+    }).format(number);
 }

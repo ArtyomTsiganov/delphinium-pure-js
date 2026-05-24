@@ -19,10 +19,12 @@ const landingPage = parseHTML(`
                     </p>
                     <div class="hero-controls">
                         <a href="/catalog" class="btn-primary">К каталогу</a>
+                        <!--
                         <a href="#" class="btn-secondary">
                             <span>К статьям</span>
                             <span class="arrow">→</span>
                         </a>
+                        -->
                     </div>
                 </div>
 
@@ -47,7 +49,9 @@ const landingPage = parseHTML(`
                                 <div class="card-content">
                                     <h3>Cobalt Dreams</h3>
                                     <p>Сеянец новозеландского гибрида 1-го поколения готовый к высадке в мае, цветение наступает в год посадки...</p>
+                                    <!--
                                     <a href="#" class="btn-card">К карточке товара</a>
+                                    -->
                                 </div>
                             </div>
                         </div>
@@ -98,7 +102,7 @@ for (const roll of landingPage.querySelectorAll(".rolling-zone")) {
     });
     roll.querySelector(".rolling-right-btn").addEventListener("click", e => {
         rollingList.scrollBy({left: 580, behavior: "smooth"});
-    })
+    });
 }
 const { searcherBtn, searcherLine } = makeSearcher();
 const searchingZone = landingPage.querySelector(".searcher-zone");

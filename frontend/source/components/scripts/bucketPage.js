@@ -1,19 +1,31 @@
-import { api, parseHTML} from "./api.js";
+import {api, parseHTML, toMoney} from "./api.js";
 import { renderMainWith } from "./mainRender.js";
-import {cart, removeFromCartAll} from "./cart.js";
+import {
+    addToCartOne,
+    getCartItemCount,
+    getCartItemsIds,
+    removeFromCartAll,
+    removeFromCartOne,
+    setCartItemCount
+} from "./cart.js";
+import {navigateTo} from "./navigation.js";
 
+
+const deliveryPrice = 400;
+let currentDeliveryStatus = null;
+let cartTotal = 0;
 
 const cartListItem = parseHTML(`
 <div class="cart-item">
     <div class="col-product item-info">
         <img src="flower.jpg" alt="Товар" class="cart-item-img">
-        <span class="cart-item-title">Полное название товара название товара Полное название товара</span>
+        <a class="cart-item-title">Полное название товара</a>
     </div>
     <div class="col-price">3000₽</div>
     <div class="col-quantity quantity-control">
-        <button class="qty-btn">—</button>
-        <span class="qty-val">1000</span>
-        <button class="qty-btn">+</button>
+        <button class="qty-btn qty-btn-add">+</button>
+        <input class="qty-val" type="number" placeholder="count">
+        <button class="qty-btn qty-btn-rem">-</button>
     </div>
     <div class="col-total item-total-price">300000₽</div>
     <button class="delete-btn">
@@ -27,11 +39,11 @@ const cartPage = parseHTML(`
     
     <nav class="checkout-tabs">
         <div class="tab-item active">
-            <span class="tab-num">1.</span>
+            <!--<span class="tab-num">1.</span>-->
             <span class="tab-text">Товары</span>
         </div>
         <div class="tab-item">
-            <span class="tab-num">2.</span>
+            <!--<span class="tab-num">2.</span>-->
             <span class="tab-text">Контакты</span>
         </div>
     </nav>
@@ -49,30 +61,32 @@ const cartPage = parseHTML(`
             <div class="cart-items-list"></div>
 
             <div class="cart-summary-line">
-                <span>Итого:</span>
-                <span class="summary-val">3000000₽</span>
+                <span>Сумма:</span>
+                <span id="summary-without" class="summary-val">3000000₽</span>
             </div>
 
             <div class="delivery-options">
-                <div class="delivery-row active">
-                    <button class="delivery-btn-badge">Самовывоз</button>
-                    <div class="delivery-desc">рассада, корни, срезака с середины апреля</div>
-                    <div class="delivery-price">0₽</div>
-                </div>
-                <div class="delivery-row">
-                    <button class="delivery-btn-badge dark">Почта России</button>
-                    <div class="delivery-desc">Посылка 1-го класса обыкновенная - по тарифам "Почта России"</div>
-                    <div class="delivery-price">400₽</div>
-                </div>
+                <label class="delivery-row">
+                    <input type="radio" name="delivery_method" value="pickup" class="delivery-radio">
+                    <span class="delivery-btn-badge">Самовывоз</span>
+                    <span class="delivery-desc">Из магазина по адресу: *Артём Ц. пока не спалился*</span>
+                    <span class="delivery-price">${toMoney(0)}</span>
+                </label>
+                <label class="delivery-row">
+                    <input type="radio" name="delivery_method" value="post" class="delivery-radio">
+                    <span class="delivery-btn-badge">Почта России</span>
+                    <span class="delivery-desc">Посылка 1-го класса обыкновенная - по тарифам "Почта России"</span>
+                    <span class="delivery-price">${toMoney(deliveryPrice)}</span>
+                </label>
             </div>
 
             <div class="cart-summary-line total-with-delivery">
-                <span>Итого (с доставкой):</span>
+                <span>Итого:</span>
                 <span class="summary-val">3000400₽</span>
             </div>
 
             <div class="step-actions right-align">
-                <button class="action-btn">Продолжить</button>
+                <button class="next-step-btn action-btn">Продолжить</button>
             </div>
         </div>
 
@@ -88,11 +102,11 @@ const cartPage = parseHTML(`
                 </div>
                 <div class="form-group">
                     <label>Телефон</label>
-                    <input type="tel" placeholder="--">
+                    <input type="tel" placeholder="+7 000 000-00-00">
                 </div>
                 <div class="form-group">
                     <label>Почтовый индекс</label>
-                    <input type="text" placeholder="+7 000 000-00-00">
+                    <input type="text" placeholder="000000">
                 </div>
                 <div class="form-group">
                     <label>Адрес доставки</label>
@@ -104,7 +118,7 @@ const cartPage = parseHTML(`
                 </div>
 
                 <div class="form-checkbox">
-                    <input type="checkbox" id="agreement" checked>
+                    <input type="checkbox" id="agreement">
                     <label for="agreement">
                         Я ознакомлен и согласен с условиями пользовательского соглашения
                         <span>и настоящим подтверждаю, что даю согласие на обработку представленных мной персональных данных.</span>
@@ -113,13 +127,13 @@ const cartPage = parseHTML(`
             </form>
 
             <div class="cart-summary-line total-with-delivery center-mobile">
-                <span>Итого (с доставкой):</span>
+                <span>Итого:</span>
                 <span class="summary-val">3000400₽</span>
             </div>
 
             <div class="step-actions split-align">
-                <button class="action-btn outline">Назад</button>
-                <button class="action-btn">Отправить заказ</button>
+                <button class="prev-step-btn action-btn outline">Назад</button>
+                <button class="validate-order action-btn">Отправить заказ</button>
             </div>
         </div>
 
@@ -128,25 +142,107 @@ const cartPage = parseHTML(`
 `);
 
 const cartList = cartPage.querySelector('.cart-items-list');
+const tabsTags = cartPage.querySelectorAll('.tab-item');
+const tabs = cartPage.querySelectorAll('.checkout-step-content');
+const cards = new Map();
+
+cartPage.querySelector('.delivery-options').addEventListener('change', (event) => {
+    if (event.target.classList.contains('delivery-radio')) {
+        currentDeliveryStatus = event.target.value;
+        updateTotal();
+    }
+});
+
+function changeStep(stepNumber) {
+    const activeStepChanger = t => t.forEach((tab, index) => {
+        if (index + 1 === stepNumber) {
+            tab.classList.add('active');
+        } else {
+            tab.classList.remove('active');
+        }
+    });
+    activeStepChanger(tabsTags);
+    activeStepChanger(tabs);
+}
+
+cartPage.querySelector('.next-step-btn').addEventListener('click', () => changeStep(2));
+cartPage.querySelector('.prev-step-btn').addEventListener('click', () => changeStep(1));
+
+function updateTotal() {
+    cartTotal = 0;
+    cartList.querySelectorAll('.cart-item').forEach(item => {
+        const itemId = parseInt(item.id);
+        const stackPrice = cards.get(itemId).price * getCartItemCount(itemId);
+        item.querySelector('.item-total-price').textContent = toMoney(stackPrice);
+        cartTotal += stackPrice;
+    });
+    cartPage.querySelectorAll('.summary-val').forEach(item => {
+        if (item?.id !== 'summary-without' && currentDeliveryStatus === 'post')
+            item.textContent = toMoney(cartTotal + deliveryPrice);
+        else
+            item.textContent = toMoney(cartTotal);
+    });
+}
 
 async function loadCart() {
-    const cards = await api.get('/cards', { card_id: cart.entries().map(item => item[0]).toArray() });
-    cards.forEach(card => {
+    cartList.querySelectorAll('.cart-item').forEach(item => item.remove());
+    
+    const idsInCart = getCartItemsIds();
+    if (idsInCart.length > 0) {
+        const response = await api.get('/cards', {card_id: getCartItemsIds()});
+        response.forEach(card => {
+            card.price = parseFloat(card.price);
+            cards.set(card.card_id, card);
+        });
+    }
+    
+    cards.forEach((card, id) => {
         const clone = cartListItem.cloneNode(true);
-        clone.id = cart.id;
-        clone.querySelector('.cart-item-title').textContent = card.name;
+        
+        clone.id = card.card_id;
+        const cartItemTitle = clone.querySelector('.cart-item-title');
+        cartItemTitle.textContent = card.name;
+        cartItemTitle.addEventListener('click', e => {
+            e.preventDefault();
+            navigateTo('/product', card);
+        })
         if (!card.image) {
             clone.querySelector('.cart-item-img').setAttribute('src', "/assets/product-card-img-demo.png");
         } else {
             clone.querySelector('.cart-item-img').setAttribute('src', card.image);
         }
-        clone.querySelector('.col-price').textContent = card.price;
-        clone.querySelector('.delete-btn').addEventListener('click', () => removeFromCartAll(card.card_id))
-        cartList.append(clone);
+        clone.querySelector('.col-price').textContent = toMoney(card.price);
+        const countInput = clone.querySelector('.qty-val');
+        countInput.id = `input-count-${id}`;
+        countInput.value = getCartItemCount(card.card_id);
+        countInput.addEventListener('change', (e) => {
+            setCartItemCount(card.card_id, e.target.value);
+            updateTotal();
+        });
+        clone.querySelector('.qty-btn-add').addEventListener('click', () => {
+            addToCartOne(card.card_id);
+            countInput.value -= -1;
+            updateTotal();
+        });
+        clone.querySelector('.qty-btn-rem').addEventListener('click', () => {
+            removeFromCartOne(card.card_id);
+            countInput.value -= 1;
+            updateTotal();
+        });
+        clone.querySelector('.col-price').textContent = toMoney(card.price);
+        clone.querySelector('.delete-btn').addEventListener('click', () => {
+            removeFromCartAll(card.card_id);
+            cards.delete(card.card_id);
+            clone.remove();
+            updateTotal();
+        });
+        
+        cartList.appendChild(clone);
     })
 }
 
 export async function renderBucketPage() {
     renderMainWith(cartPage);
     await loadCart();
+    updateTotal();
 }

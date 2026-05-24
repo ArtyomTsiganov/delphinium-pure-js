@@ -1,6 +1,7 @@
 import { renderMainWith } from "./mainRender.js";
-import { parseHTML } from "./api.js";
+import { parseHTML, toMoney } from "./api.js";
 import { addToCartOne } from "./cart.js";
+import {showToast} from "./toastAlert.js";
 
 
 const productPage = parseHTML(`
@@ -36,14 +37,20 @@ function setProductData() {
         productPage.querySelector('.main-product-img').setAttribute('src', 'assets/product-card-img-demo.png');
     else
         productPage.querySelector('.main-product-img').setAttribute('src', card.image);
-    productPage.querySelector('.price').textContent = card.price;
+    productPage.querySelector('.price').textContent = toMoney(card.price);
     productPage.querySelector('.stock b').textContent = card.count;
-    productPage.querySelector('.add-to-cart-btn').addEventListener('click', () => addToCartOne(card.id));
+    productPage.querySelector('.add-to-cart-btn').replaceWith(
+        productPage.querySelector('.add-to-cart-btn').cloneNode(true)
+    );
+    productPage.querySelector('.add-to-cart-btn').addEventListener('click', () => {
+        addToCartOne(card.card_id);
+        showToast(card.short_name ?? card.name);
+    });
     productPage.querySelector('.product-title').textContent = card.name;
     productPage.querySelector('.product-description').textContent = card.description;
-    productPage.querySelector('.back-link').addEventListener("click", (e) => {
+    productPage.querySelector('.back-link').addEventListener("click", e => {
         e.preventDefault();
-        history.back();
+        history.go(-1);
     });
 }
 

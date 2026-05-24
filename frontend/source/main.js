@@ -9,11 +9,11 @@ setRoutes({
     '/': renderLandingPage,
     '/catalog': renderCatalogPage,
     '/cart': renderBucketPage,
-    '/blog': () => {},
-    '/profile': () => {},
+    '/deliveries': () => {},
     '/product': renderProductPage,
 });
 
 document.querySelector('#header-catalog').addEventListener("click", () => navigateTo('/catalog'));
-document.querySelector('#header-blog').addEventListener("click", () => navigateTo('/blog'));
-document.querySelector('#header-profile').addEventListener("click", () => navigateTo('/cart'));
+document.querySelector('#header-deliveries').addEventListener("click", () => navigateTo('/deliveries'));
+document.querySelector('#header-cart').addEventListener("click", () => navigateTo('/cart'));
+document.querySelector('#header-logo').addEventListener("click", () => navigateTo('/'));
