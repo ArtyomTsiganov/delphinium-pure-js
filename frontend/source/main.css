@@ -637,31 +637,57 @@ footer {
         display: block;
     }
 
-    .cart-table-header {
-        display: flex;
-        align-items: center;
-        padding-bottom: 15px;
-        font-size: 14px;
-        font-weight: bold;
-    }
+    /*.cart-table-header {*/
+    /*    display: flex;*/
+    /*    align-items: center;*/
+    /*    padding-bottom: 15px;*/
+    /*    font-size: 14px;*/
+    /*    font-weight: bold;*/
+    /*}*/
+
+    /*.col-product {*/
+    /*    flex: 2;*/
+    /*}*/
+    
+    /*.col-price {*/
+    /*    flex: 0 0 80px;*/
+    /*    text-align: right;*/
+    /*}*/
+    
+    /*.col-quantity {*/
+    /*    flex: 0 0 140px;*/
+    /*    text-align: center;*/
+    /*}*/
+    
+    /*.col-total {*/
+    /*    flex: 0 0 100px;*/
+    /*    text-align: right;*/
+    /*}*/
 
     .col-product {
-        flex: 2;
+        flex: 1 1 40%;
+        display: flex;
+        align-items: center;
+        gap: 15px;
     }
-
     .col-price {
-        flex: 0 0 80px;
+        flex: 0 0 15%;
         text-align: right;
     }
-
     .col-quantity {
-        flex: 0 0 140px;
-        text-align: center;
+        flex: 0 0 25%;
+        display: flex;
+        justify-content: center;
     }
-
     .col-total {
-        flex: 0 0 100px;
+        flex: 0 0 15%;
         text-align: right;
+        font-weight: bold;
+    }
+    .col-delete {
+        flex: 0 0 5%;
+        display: flex;
+        justify-content: flex-end;
     }
 
     .cart-items-list {
@@ -671,9 +697,17 @@ footer {
         margin-bottom: 30px;
     }
 
+    /*.cart-item {*/
+    /*    display: flex;*/
+    /*    align-items: center;*/
+    /*}*/
+
+    .cart-table-header,
     .cart-item {
         display: flex;
         align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid #eef2f1;
     }
 
     .item-info {
@@ -685,13 +719,13 @@ footer {
     .cart-item-img {
         width: 60px;
         height: 60px;
-        object-fit: cover;
+        object-fit: contain;
+        border-radius: 5px;
     }
 
     .cart-item-title {
-        font-size: 14px;
-        line-height: 1.4;
-        padding-right: 20px;
+        font-size: 15px;
+        color: var(--color-primary);
         cursor: pointer;
     }
     .cart-item-title:hover {
@@ -704,31 +738,81 @@ footer {
         align-items: center;
         justify-content: center;
         gap: 10px;
-    }
 
-    .qty-btn {
-        background: transparent;
-        border: none;
-        font-size: 16px;
-        cursor: pointer;
-        color: #1a5249;
-        
-        .qty-btn-add {}
-        .qty-btn-rem {}
-    }
+        .quantity-picker {
+            display: flex;
+            align-items: center;
+            background: transparent;
+            border: 1px solid var(--color-primary);
+            border-radius: 4px;
+            height: 36px;
+            overflow: hidden;
 
-    .qty-val {
-        font-size: 14px;
+            .qty-btn {
+                background: transparent;
+                border: none;
+                width: 36px;
+                height: 100%;
+                font-size: 15px;
+                color: var(--color-primary);
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: background 0.2s ease;
+
+                .qty-btn-add {
+                }
+
+                .qty-btn-rem {
+                }
+            }
+
+            .qty-btn:hover {
+                background: rgba(26, 82, 73, 0.05);
+            }
+
+            .qty-input {
+                width: 50px;
+                height: 100%;
+                border: none;
+                background: transparent;
+                text-align: center;
+                font-size: 15px;
+                font-weight: 500;
+                color: var(--color-primary);
+                padding: 0;
+            }
+
+            .qty-input::-webkit-outer-spin-button,
+            .qty-input::-webkit-inner-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
+
+            .qty-input {
+                -moz-appearance: textfield;
+            }
+
+            .qty-input:focus {
+                outline: none;
+            }
+        }
     }
 
     .delete-btn {
         background: transparent;
         border: none;
+        color: #a3b8b5;
         cursor: pointer;
-        color: #1a5249;
-        margin-left: 15px;
+        padding: 5px;
+        transition: color 0.2s ease;
         display: flex;
         align-items: center;
+    }
+
+    .delete-btn:hover {
+        color: #d9534f;
     }
 
     .cart-summary-line {

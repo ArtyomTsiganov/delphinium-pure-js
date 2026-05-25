@@ -17,20 +17,31 @@ let cartTotal = 0;
 
 const cartListItem = parseHTML(`
 <div class="cart-item">
-    <div class="col-product item-info">
+    <div class="cart-col col-product item-info">
         <img src="flower.jpg" alt="Товар" class="cart-item-img">
         <a class="cart-item-title">Полное название товара</a>
     </div>
-    <div class="col-price">3000₽</div>
-    <div class="col-quantity quantity-control">
-        <button class="qty-btn qty-btn-add">+</button>
-        <input class="qty-val" type="number" placeholder="count">
-        <button class="qty-btn qty-btn-rem">-</button>
+    
+    <div class="cart-col col-price">3000₽</div>
+    
+    <div class="cart-col col-quantity quantity-control">
+        <div class="quantity-picker">
+            <button class="qty-btn qty-btn-add">+</button>
+            <input class="qty-input" type="number" placeholder="count">
+            <button class="qty-btn qty-btn-rem">-</button>
+        </div>
     </div>
-    <div class="col-total item-total-price">300000₽</div>
-    <button class="delete-btn">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-    </button>
+    
+    <div class="cart-col col-total item-total-price">300000₽</div>
+    
+    <div class="cart-col col-delete">
+        <button class="delete-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+        </button>
+    </div>
 </div>
 `);
 
@@ -56,6 +67,7 @@ const cartPage = parseHTML(`
                 <div class="col-price">Цена</div>
                 <div class="col-quantity">Количество</div>
                 <div class="col-total">Стоимость</div>
+                <div class="col-delete"></div>
             </div>
 
             <div class="cart-items-list"></div>
@@ -189,7 +201,7 @@ async function loadCart() {
     
     const idsInCart = getCartItemsIds();
     if (idsInCart.length > 0) {
-        const response = await api.get('/cards', {card_id: getCartItemsIds()});
+        const response = await api.get('/cards', {count: 1000, orderBy: 'name', card_id: getCartItemsIds()});
         response.forEach(card => {
             card.price = parseFloat(card.price);
             cards.set(card.card_id, card);
@@ -212,7 +224,7 @@ async function loadCart() {
             clone.querySelector('.cart-item-img').setAttribute('src', card.image);
         }
         clone.querySelector('.col-price').textContent = toMoney(card.price);
-        const countInput = clone.querySelector('.qty-val');
+        const countInput = clone.querySelector('.qty-input');
         countInput.id = `input-count-${id}`;
         countInput.value = getCartItemCount(card.card_id);
         countInput.addEventListener('change', (e) => {
