@@ -1,7 +1,7 @@
 import { api, parseHTML, toMoney } from "./api.js";
 import { addToCartOne } from "./cart.js";
 import { navigateTo } from "./navigation.js";
-import {showToast} from "./toastAlert.js";
+import {showToastAddToCart} from "./toastAlert.js";
 
 const cardTemplate = parseHTML(`
     <div class="product-card">
@@ -35,7 +35,7 @@ export async function loadCards(container, params) {
             clone.querySelector('button').addEventListener('click', e => {
                 e.preventDefault();
                 addToCartOne(card.card_id);
-                showToast(card.short_name ?? card.name);
+                showToastAddToCart(card.short_name ?? card.name);
             });
             clone.querySelector('a').addEventListener('click', e => {
                 e.preventDefault();

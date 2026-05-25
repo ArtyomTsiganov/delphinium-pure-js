@@ -2,6 +2,7 @@ import {api, parseHTML, toMoney} from "./api.js";
 import { renderMainWith } from "./mainRender.js";
 import {
     addToCartOne,
+    clearCart,
     getCartItemCount,
     getCartItemsIds,
     removeFromCartAll,
@@ -9,10 +10,12 @@ import {
     setCartItemCount
 } from "./cart.js";
 import {navigateTo} from "./navigation.js";
+import {showToastAlert, showToastSuccess} from "./toastAlert.js";
+import {checkDataValid, getUserData, setUserData} from "./userDataManager.js";
 
 
 const deliveryPrice = 400;
-let currentDeliveryStatus = null;
+let currentDeliveryStatus = undefined;
 let cartTotal = 0;
 
 const cartListItem = parseHTML(`
@@ -106,31 +109,31 @@ const cartPage = parseHTML(`
             <form id="user-data-form" class="checkout-form">
                 <div class="form-group">
                     <label>ФИО</label>
-                    <input type="text" placeholder="Иванов Иван Иванович">
+                    <input type="text" name="fio" placeholder="Иванов Иван Иванович">
                 </div>
                 <div class="form-group">
                     <label>E-mail</label>
-                    <input type="email" placeholder="example@mail.ru">
+                    <input type="email" name="email" placeholder="example@mail.ru">
                 </div>
                 <div class="form-group">
                     <label>Телефон</label>
-                    <input type="tel" placeholder="+7 000 000-00-00">
+                    <input type="tel" name="phone" placeholder="+79876543210">
                 </div>
                 <div class="form-group">
                     <label>Почтовый индекс</label>
-                    <input type="text" placeholder="000000">
+                    <input type="text" name="zipcode" placeholder="000000">
                 </div>
                 <div class="form-group">
                     <label>Адрес доставки</label>
-                    <input type="text" placeholder="--">
+                    <input type="text" name="address">
                 </div>
                 <div class="form-group">
                     <label>Комментарий</label>
-                    <textarea rows="4" placeholder="Комментарий к заказу"></textarea>
+                    <textarea rows="4" name="comment" placeholder="Комментарий к заказу"></textarea>
                 </div>
 
                 <div class="form-checkbox">
-                    <input type="checkbox" id="agreement">
+                    <input type="checkbox" id="agreement" name="agreement">
                     <label for="agreement">
                         Я ознакомлен и согласен с условиями пользовательского соглашения
                         <span>и настоящим подтверждаю, что даю согласие на обработку представленных мной персональных данных.</span>
@@ -156,6 +159,8 @@ const cartPage = parseHTML(`
 const cartList = cartPage.querySelector('.cart-items-list');
 const tabsTags = cartPage.querySelectorAll('.tab-item');
 const tabs = cartPage.querySelectorAll('.checkout-step-content');
+const form = cartPage.querySelector('#user-data-form');
+const submitBtn = cartPage.querySelector('.validate-order');
 const cards = new Map();
 
 cartPage.querySelector('.delivery-options').addEventListener('change', (event) => {
@@ -177,7 +182,12 @@ function changeStep(stepNumber) {
     activeStepChanger(tabs);
 }
 
-cartPage.querySelector('.next-step-btn').addEventListener('click', () => changeStep(2));
+cartPage.querySelector('.next-step-btn').addEventListener('click', () => {
+    if (currentDeliveryStatus)
+        changeStep(2);
+    else
+        showToastAlert('Выберите способ получения');
+});
 cartPage.querySelector('.prev-step-btn').addEventListener('click', () => changeStep(1));
 
 function updateTotal() {
@@ -196,8 +206,45 @@ function updateTotal() {
     });
 }
 
+form.querySelectorAll('input,textarea').forEach(item => {
+    if (item.id !== 'agreement') {
+        item.value = getUserData(item.name);
+    }
+});
+
+form.addEventListener('input', (e) => {
+    if (e.target.id === 'agreement') {
+        if (e.target.checked)
+            e.target.classList.remove('invalid');
+    } else {
+        setUserData(e.target.name, e.target.value);
+        if (checkDataValid(e.target.name, e.target.value))
+            e.target.classList.remove('invalid');
+    }
+});
+
+submitBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    let isValid = true;
+    form.querySelectorAll('input').forEach(item => {
+        if (item.id === 'agreement' ? !item.checked : !checkDataValid(item.name, item.value)) {
+            item.classList.add('invalid');
+            if (item.id === 'agreement')
+                showToastAlert(`Ознакомьтесь с условиями пользовательского соглашения`);
+            else
+                showToastAlert(`Некорректный ввод: ${item.previousElementSibling.textContent}`);
+            isValid = false;
+        }
+    });
+    if (isValid) {
+        clearCart();
+        showToastSuccess('Заказ отправлен в магазин');
+    }
+})
+
 async function loadCart() {
     cartList.querySelectorAll('.cart-item').forEach(item => item.remove());
+    cards.clear();
     
     const idsInCart = getCartItemsIds();
     if (idsInCart.length > 0) {
@@ -255,6 +302,7 @@ async function loadCart() {
 
 export async function renderBucketPage() {
     renderMainWith(cartPage);
+    changeStep(1);
     await loadCart();
     updateTotal();
 }

@@ -1,7 +1,7 @@
 import { renderMainWith } from "./mainRender.js";
 import { parseHTML, toMoney } from "./api.js";
 import { addToCartOne } from "./cart.js";
-import {showToast} from "./toastAlert.js";
+import {showToastAddToCart} from "./toastAlert.js";
 
 
 const productPage = parseHTML(`
@@ -44,7 +44,7 @@ function setProductData() {
     );
     productPage.querySelector('.add-to-cart-btn').addEventListener('click', () => {
         addToCartOne(card.card_id);
-        showToast(card.short_name ?? card.name);
+        showToastAddToCart(card.short_name ?? card.name);
     });
     productPage.querySelector('.product-title').textContent = card.name;
     productPage.querySelector('.product-description').textContent = card.description;

@@ -11,6 +11,7 @@ export function getCartItemCount(goodsItemId) {
 
 export function setCartItemCount(goodsItemId, count) {
     cart.set(goodsItemId, count);
+    saveCart();
 }
 
 export function getCartItemsIds() {
@@ -36,8 +37,12 @@ export function removeFromCartOne(goodsItemId) {
 }
 
 export function removeFromCartAll(goodsItemId) {
-    console.log(cart, goodsItemId);
     if (cart.delete(goodsItemId)) {
         saveCart();
     }
+}
+
+export function clearCart() {
+    cart.clear();
+    saveCart();
 }
