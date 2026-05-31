@@ -50,3 +50,7 @@ export function showToastSuccess(message) {
 export function showToastAlert(message) {
     showToast(parseHTML(`<span>${message}</span>`), ['alert']);
 }
+
+export function showToastError(message) {
+    showToast(parseHTML(`<span>${message}</span>`), ['error']);
+}

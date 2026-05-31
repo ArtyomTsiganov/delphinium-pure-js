@@ -12,7 +12,24 @@ export const api = {
         if (!response.ok)
             throw new Error('API Error');
         return response.json();
-    }
+    },
+    
+    async post(endpoint, dataToBody = {}) {
+        const url = new URL(`${window.location.origin}${endpoint}`);
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dataToBody),
+        });
+        if (!response.ok) {
+            if (response.status === 422)
+                throw new Error('422');
+            throw new Error('API Error');
+        }
+        return response.json();
+    },
 };
 
 export function parseHTML(htmlString) {

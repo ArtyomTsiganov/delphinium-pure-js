@@ -1,5 +1,8 @@
+import {api} from "./api.js";
+
 const loadedCart = localStorage.getItem("cart");
 const cart = loadedCart ? new Map(JSON.parse(loadedCart)) : new Map();
+cart.orderId = undefined;
 
 function saveCart() {
     localStorage.setItem("cart", JSON.stringify([...cart.entries()]));
@@ -45,4 +48,19 @@ export function removeFromCartAll(goodsItemId) {
 export function clearCart() {
     cart.clear();
     saveCart();
+}
+
+export async function validateCartItems() {
+    try {
+        cart.orderId = await api.post(
+            "/orders/",
+            cart.entries().map(([card_id, count]) => ({card_id: card_id, count: count})).toArray()
+        ).order_id;
+        return true;
+    } catch (error) {
+        if (error.message === '422') {
+            return false;
+        }
+        throw error;
+    }
 }

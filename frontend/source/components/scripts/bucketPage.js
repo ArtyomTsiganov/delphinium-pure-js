@@ -7,15 +7,15 @@ import {
     getCartItemsIds,
     removeFromCartAll,
     removeFromCartOne,
-    setCartItemCount
+    setCartItemCount, validateCartItems
 } from "./cart.js";
 import {navigateTo} from "./navigation.js";
-import {showToastAlert, showToastSuccess} from "./toastAlert.js";
+import {showToastAlert, showToastError, showToastSuccess} from "./toastAlert.js";
 import {checkDataValid, getUserData, setUserData} from "./userDataManager.js";
 
 
 const deliveryPrice = 400;
-let currentDeliveryStatus = undefined;
+let currentDeliveryOptionStatus = undefined;
 let cartTotal = 0;
 
 const cartListItem = parseHTML(`
@@ -165,7 +165,7 @@ const cards = new Map();
 
 cartPage.querySelector('.delivery-options').addEventListener('change', (event) => {
     if (event.target.classList.contains('delivery-radio')) {
-        currentDeliveryStatus = event.target.value;
+        currentDeliveryOptionStatus = event.target.value;
         updateTotal();
     }
 });
@@ -182,10 +182,20 @@ function changeStep(stepNumber) {
     activeStepChanger(tabs);
 }
 
-cartPage.querySelector('.next-step-btn').addEventListener('click', () => {
-    if (currentDeliveryStatus)
-        changeStep(2);
-    else
+cartPage.querySelector('.next-step-btn').addEventListener('click', e => {
+    if (currentDeliveryOptionStatus) {
+        e.target.textContent = 'Подождите...';
+        e.target.disabled = true;
+        validateCartItems().then(value => {
+            if (value)
+                changeStep(2);
+        }).catch(reason => {
+            showToastError(`Ошибка сервера: ${reason}`);
+        }).finally(() => {
+            e.target.textContent = 'Продолжить';
+            e.target.disabled = false;
+        });
+    } else
         showToastAlert('Выберите способ получения');
 });
 cartPage.querySelector('.prev-step-btn').addEventListener('click', () => changeStep(1));
@@ -199,7 +209,7 @@ function updateTotal() {
         cartTotal += stackPrice;
     });
     cartPage.querySelectorAll('.summary-val').forEach(item => {
-        if (item?.id !== 'summary-without' && currentDeliveryStatus === 'post')
+        if (item?.id !== 'summary-without' && currentDeliveryOptionStatus === 'post')
             item.textContent = toMoney(cartTotal + deliveryPrice);
         else
             item.textContent = toMoney(cartTotal);
