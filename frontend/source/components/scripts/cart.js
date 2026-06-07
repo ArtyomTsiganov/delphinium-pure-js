@@ -4,6 +4,10 @@ const loadedCart = localStorage.getItem("cart");
 const cart = loadedCart ? new Map(JSON.parse(loadedCart)) : new Map();
 cart.orderId = undefined;
 
+window.addEventListener('pagehide', () => {
+    
+});
+
 function saveCart() {
     localStorage.setItem("cart", JSON.stringify([...cart.entries()]));
 }
@@ -51,16 +55,16 @@ export function clearCart() {
 }
 
 export async function validateCartItems() {
-    try {
-        cart.orderId = await api.post(
-            "/orders/",
-            cart.entries().map(([card_id, count]) => ({card_id: card_id, count: count})).toArray()
-        ).order_id;
+    return api.post(
+        "/orders/",
+        cart.entries().map(([card_id, count]) => ({card_id: card_id, count: count})).toArray()
+    ).then(response => {
+        cart.orderId = response.order_id;
         return true;
-    } catch (error) {
+    }).catch(error => {
         if (error.message === '422') {
             return false;
         }
         throw error;
-    }
+    });
 }

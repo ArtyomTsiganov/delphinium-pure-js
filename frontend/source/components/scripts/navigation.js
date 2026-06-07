@@ -20,6 +20,10 @@ export function setRoutes(newRoutes) {
 export function navigateTo(url, state=null) {
     history.pushState(state, null, url);
     router(url);
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
 }
 
 window.addEventListener('popstate', e => {

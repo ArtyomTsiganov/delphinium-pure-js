@@ -37,6 +37,7 @@ body {
     line-height: 1.5;
     min-height: 100vh;
     max-width: 100vw;
+    overflow-x: clip;
     display: flex;
     flex-direction: column;
 }
@@ -271,7 +272,7 @@ header {
 }
 
 footer {
-    margin-top: 100px;
+    margin-top: 20px;
     display: flex;
     background-color: var(--color-primary);
     align-items: center;
@@ -279,22 +280,20 @@ footer {
     
     div {
         display: flex;
-        height: stretch;
         align-items: center;
         justify-content: center;
         a {
             margin: 20px 20px;
             color: var(--color-white);
+            cursor: pointer;
+        }
+        a:hover {
+            text-decoration: underline;
         }
         span {
             margin: 0 20px;
             color: var(--color-white);
         }
-    }
-    
-    .dilf {
-        flex-direction: column;
-        align-items: flex-start;
     }
 }
 
@@ -498,6 +497,18 @@ footer {
         justify-content: space-between;
         width: stretch;
     }
+}
+
+.back-link {
+    display: inline-block;
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: 500;
+    margin: 0 0 20px min(var(--padding-primary), 20px);
+}
+
+.back-link:hover {
+    text-decoration: underline;
 }
 
 .product-page {
@@ -1062,6 +1073,40 @@ footer {
     }
 }
 
+.document-page {
+    display: flex;
+    flex-direction: column;
+    max-width: 100vw;
+    width: stretch;
+    margin: 0;
+    padding: 0;
+    
+    h1 {
+        width: stretch;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: fit-content;
+        background-color: var(--color-primary-soft);
+        color: var(--color-primary);
+        margin: 0 0 10px 0;
+        padding: 30px var(--padding-primary);
+    }
+    
+    h2 {
+        color: var(--color-primary);
+        margin: 0;
+        padding: 30px 0 10px var(--padding-primary);
+        height: fit-content;
+    }
+    
+    p {
+        color: var(--color-primary-dark);
+        margin: 0;
+        padding: 0 var(--padding-primary);
+    }
+}
+
 @media (max-width: 650px) {
     .checkout-tabs { gap: 15px; }
     .cart-table-header { display: none; }
@@ -1094,5 +1139,17 @@ footer {
     
     .hero-controls {
         justify-content: center;
+    }
+    
+    footer {
+        flex-direction: column;
+    }
+    
+    .rolling-header {
+        flex-direction: column;
+    }
+    
+    :root {
+        --padding-primary: 10px;
     }
 }
