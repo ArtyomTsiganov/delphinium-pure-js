@@ -7,7 +7,7 @@ import {
     getCartItemsIds,
     removeFromCartAll,
     removeFromCartOne,
-    setCartItemCount, validateCartItems
+    setCartItemCount, validateCartOrder
 } from "./cart.js";
 import {navigateTo} from "./navigation.js";
 import {showToastAlert, showToastError, showToastSuccess} from "./toastAlert.js";
@@ -186,7 +186,7 @@ cartPage.querySelector('.next-step-btn').addEventListener('click', e => {
     if (currentDeliveryOptionStatus) {
         e.target.textContent = 'Подождите...';
         e.target.disabled = true;
-        validateCartItems().then(value => {
+        validateCartOrder().then(value => {
             if (value)
                 changeStep(2);
         }).catch(reason => {
