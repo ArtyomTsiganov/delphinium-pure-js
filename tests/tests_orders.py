@@ -1,3 +1,5 @@
+import uuid
+
 import pytest
 
 async def create_category(client):
@@ -82,7 +84,7 @@ async def test_create_order_success(client):
     data = response.json()
 
     assert data["status"] == "reserved"
-    assert data["order_id"] == 1
+    assert "public_id" in data
 
 
 
@@ -164,10 +166,10 @@ async def test_checkout_order_success(client):
         ]
     )
 
-    order_id = create_response.json()["order_id"]
-
+    public_id = create_response.json()["public_id"]
+    assert "order_id" not in create_response.json()
     response = await client.put(
-        f"/orders/{order_id}/checkout",
+        f"/orders/{public_id}/checkout",
         json={
             "name": "Alex",
             "email": "alex@test.com",
@@ -194,7 +196,7 @@ async def test_checkout_order_success(client):
 async def test_checkout_invalid_order(client):
 
     response = await client.put(
-        "/orders/999/checkout",
+        f"/orders/{uuid.uuid4()}/checkout",
         json={
             "name": "Alex",
             "email": "alex@test.com",
@@ -208,7 +210,7 @@ async def test_checkout_invalid_order(client):
         }
     )
 
-    assert response.status_code == 400
+    assert response.status_code == 404
 
     data = response.json()
 
@@ -230,7 +232,7 @@ async def test_checkout_completed_order(client):
         ]
     )
 
-    order_id = create_response.json()["order_id"]
+    public_id = create_response.json()["public_id"]
 
     checkout_payload = {
         "name": "Alex",
@@ -245,14 +247,14 @@ async def test_checkout_completed_order(client):
     }
 
     first_checkout = await client.put(
-        f"/orders/{order_id}/checkout",
+        f"/orders/{public_id}/checkout",
         json=checkout_payload
     )
 
     assert first_checkout.status_code == 200
 
     second_checkout = await client.put(
-        f"/orders/{order_id}/checkout",
+        f"/orders/{public_id}/checkout",
         json=checkout_payload
     )
 
@@ -310,11 +312,11 @@ async def test_change_order_status(client):
 
     assert create_response.status_code == 200
 
-    order_id = create_response.json()["order_id"]
+    public_id = create_response.json()["public_id"]
 
     # меняем статус
     response = await client.put(
-        f"/orders/{order_id}/change",
+        f"/orders/{public_id}/change",
         params={
             "new_status": "completed"
         }
@@ -324,7 +326,7 @@ async def test_change_order_status(client):
 
     data = response.json()
 
-    assert data["order_id"] == order_id
+    assert data["public_id"] == public_id
     assert data["status"] == "completed"
 
 
@@ -344,11 +346,11 @@ async def test_change_order_status_multiple_times(client):
         ]
     )
 
-    order_id = create_response.json()["order_id"]
+    public_id = create_response.json()["public_id"]
 
     # RESERVED -> COMPLETED
     response1 = await client.put(
-        f"/orders/{order_id}/change",
+        f"/orders/{public_id}/change",
         params={
             "new_status": "completed"
         }
@@ -360,7 +362,7 @@ async def test_change_order_status_multiple_times(client):
 
     # COMPLETED -> SHIPPING
     response2 = await client.put(
-        f"/orders/{order_id}/change",
+        f"/orders/{public_id}/change",
         params={
             "new_status": "shipping"
         }
@@ -372,7 +374,7 @@ async def test_change_order_status_multiple_times(client):
 
     # SHIPPING -> DELIVERED
     response3 = await client.put(
-        f"/orders/{order_id}/change",
+        f"/orders/{public_id}/change",
         params={
             "new_status": "delivered"
         }
@@ -397,10 +399,10 @@ async def test_change_order_status_invalid_enum(client):
         ]
     )
 
-    order_id = create_response.json()["order_id"]
+    public_id = create_response.json()["public_id"]
 
     response = await client.put(
-        f"/orders/{order_id}/change",
+        f"/orders/{public_id}/change",
         params={
             "new_status": "some_weird_status"
         }
@@ -413,13 +415,13 @@ async def test_change_order_status_invalid_enum(client):
 async def test_change_order_status_invalid_order(client):
 
     response = await client.put(
-        "/orders/999/change",
+        f"/orders/{uuid.uuid4()}/change",
         params={
             "new_status": "completed"
         }
     )
 
-    assert response.status_code == 400
+    assert response.status_code == 404
 
     data = response.json()
 
