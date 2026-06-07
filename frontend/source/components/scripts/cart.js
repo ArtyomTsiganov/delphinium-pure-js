@@ -54,7 +54,7 @@ export function clearCart() {
     saveCart();
 }
 
-export async function validateCartItems() {
+export async function validateCartOrder() {
     return api.post(
         "/orders/",
         cart.entries().map(([card_id, count]) => ({card_id: card_id, count: count})).toArray()
