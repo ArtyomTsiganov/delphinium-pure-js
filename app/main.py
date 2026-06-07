@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 
 from fastapi.responses import FileResponse
 
-from fastapi import FastAPI
+from fastapi import FastAPI, APIRouter
 from fastapi.staticfiles import StaticFiles
 
 from app.database import engine, Base
@@ -25,9 +25,12 @@ app = FastAPI(
     title="very beautiful site",
     lifespan=lifespan
 )
-# Подключение роутеров
-app.include_router(cards.router)
-app.include_router(orders.router)
+api_router = APIRouter(prefix="/api")
+
+api_router.include_router(cards.router)
+api_router.include_router(orders.router)
+
+app.include_router(api_router)
 
 # Такс что ещё нужно:
 # Функционал для админки, добавить удалить изменить товар
