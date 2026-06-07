@@ -76,4 +76,8 @@ class Orders(Base):
     comment:  Mapped[str] = mapped_column(String, nullable=True)
 
 
-    card_associations: Mapped[List["OrderItems"]] = relationship(back_populates="order")
+    card_associations: Mapped[List["OrderItems"]] = relationship(
+        back_populates="order",
+        cascade="all, delete-orphan",
+        passive_deletes=True
+    )

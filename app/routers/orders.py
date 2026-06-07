@@ -7,7 +7,7 @@ from sqlalchemy.orm import selectinload
 from app.models import Cards, OrderItems, Orders, OrderStatus
 from app.schemas.orders import OrderCreate, OrderItemCreate, OrderResponse, OrderItemResponse
 from app.database import get_db
-
+from app.schemas.schemas import SuccessResponse
 
 router = APIRouter(
     prefix="/orders",
@@ -133,3 +133,40 @@ async def checkout_order(
     await db.commit()
     await db.refresh(order, attribute_names=["card_associations"])
     return order
+
+
+@router.get(
+    "/{order_id}/",
+    response_model = OrderResponse
+)
+async def checkout_order(
+        order_id: int,
+        db: AsyncSession = Depends(get_db)
+):
+    order = await db.get(
+        Orders,
+        order_id,
+        options=[selectinload(Orders.card_associations)]
+    )
+    if not order:
+        raise HTTPException(status_code=400, detail="Заказ не найден или не зарезервирован")
+    return order
+
+@router.delete(
+    "/{order_id}/",
+    response_model = SuccessResponse
+)
+async def checkout_order(
+        order_id: int,
+        db: AsyncSession = Depends(get_db)
+):
+    order = await db.get(
+        Orders,
+        order_id,
+        options=[selectinload(Orders.card_associations)]
+    )
+    if not order:
+        raise HTTPException(status_code=400, detail="Заказ не найден или не зарезервирован")
+    await db.delete(order)
+    await db.commit()
+    return {"status": "Item successfully deleted", "added_count": -1}
