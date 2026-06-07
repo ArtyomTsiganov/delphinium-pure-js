@@ -16,7 +16,6 @@ import {checkDataValid, getUserData, setUserData} from "./userDataManager.js";
 
 const deliveryPrice = 400;
 let currentDeliveryOptionStatus = undefined;
-let cartTotal = 0;
 
 const cartListItem = parseHTML(`
 <div class="cart-item">
@@ -30,7 +29,7 @@ const cartListItem = parseHTML(`
     <div class="cart-col col-quantity quantity-control">
         <div class="quantity-picker">
             <button class="qty-btn qty-btn-add">+</button>
-            <input class="qty-input" type="number" placeholder="count">
+            <input class="qty-input" type="text" inputmode="numeric" placeholder="count">
             <button class="qty-btn qty-btn-rem">-</button>
         </div>
     </div>
@@ -49,7 +48,7 @@ const cartListItem = parseHTML(`
 `);
 
 const cartPage = parseHTML(`
-<div class="cart-page">
+<div class="cart-page" xmlns="http://www.w3.org/1999/html">
     
     <nav class="checkout-tabs">
         <div class="tab-item active">
@@ -81,18 +80,22 @@ const cartPage = parseHTML(`
             </div>
 
             <div class="delivery-options">
-                <label class="delivery-row">
-                    <input type="radio" name="delivery_method" value="pickup" class="delivery-radio">
-                    <span class="delivery-btn-badge">Самовывоз</span>
+                <div class="delivery-row">
+                    <label class="delivery-btn-badge">
+                        Самовывоз
+                        <input type="radio" name="delivery_method" value="pickup" class="delivery-radio">
+                    </label>
                     <span class="delivery-desc">Из магазина по адресу: *Артём Ц. пока не спалился*</span>
                     <span class="delivery-price">${toMoney(0)}</span>
-                </label>
-                <label class="delivery-row">
-                    <input type="radio" name="delivery_method" value="post" class="delivery-radio">
-                    <span class="delivery-btn-badge">Почта России</span>
+                </div>
+                <div class="delivery-row">
+                    <label class="delivery-btn-badge">
+                        Почта России
+                        <input type="radio" name="delivery_method" value="post" class="delivery-radio">
+                    </label>
                     <span class="delivery-desc">Посылка 1-го класса обыкновенная - по тарифам "Почта России"</span>
                     <span class="delivery-price">${toMoney(deliveryPrice)}</span>
-                </label>
+                </div>
             </div>
 
             <div class="cart-summary-line total-with-delivery">
@@ -163,11 +166,9 @@ const form = cartPage.querySelector('#user-data-form');
 const submitBtn = cartPage.querySelector('.validate-order');
 const cards = new Map();
 
-cartPage.querySelector('.delivery-options').addEventListener('change', (event) => {
-    if (event.target.classList.contains('delivery-radio')) {
-        currentDeliveryOptionStatus = event.target.value;
-        updateTotal();
-    }
+cartPage.querySelector('.delivery-options').addEventListener('change', (e) => {
+    currentDeliveryOptionStatus = e.target.value;
+    updateTotal();
 });
 
 function changeStep(stepNumber) {
@@ -189,6 +190,8 @@ cartPage.querySelector('.next-step-btn').addEventListener('click', e => {
         validateCartOrder().then(value => {
             if (value)
                 changeStep(2);
+            else
+                showToastAlert(`Какого-то из товаров в наличии недостаточно`);
         }).catch(reason => {
             showToastError(`Ошибка сервера: ${reason}`);
         }).finally(() => {
@@ -201,7 +204,7 @@ cartPage.querySelector('.next-step-btn').addEventListener('click', e => {
 cartPage.querySelector('.prev-step-btn').addEventListener('click', () => changeStep(1));
 
 function updateTotal() {
-    cartTotal = 0;
+    let cartTotal = 0;
     cartList.querySelectorAll('.cart-item').forEach(item => {
         const itemId = parseInt(item.id);
         const stackPrice = cards.get(itemId).price * getCartItemCount(itemId);
@@ -284,19 +287,32 @@ async function loadCart() {
         const countInput = clone.querySelector('.qty-input');
         countInput.id = `input-count-${id}`;
         countInput.value = getCartItemCount(card.card_id);
-        countInput.addEventListener('change', (e) => {
+        if (getCartItemCount(card.card_id) > card.count)
+            countInput.classList.add('invalid');
+        countInput.addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/[^0-9]/g, '').replace(/^0+/, '').replace(/^$/, '0');
             setCartItemCount(card.card_id, e.target.value);
+            if (getCartItemCount(card.card_id) > card.count)
+                e.target.classList.add('invalid');
+            else
+                e.target.classList.remove('invalid');
             updateTotal();
         });
         clone.querySelector('.qty-btn-add').addEventListener('click', () => {
             addToCartOne(card.card_id);
             countInput.value -= -1;
+            if (getCartItemCount(card.card_id) > card.count)
+                countInput.classList.add('invalid');
             updateTotal();
         });
         clone.querySelector('.qty-btn-rem').addEventListener('click', () => {
-            removeFromCartOne(card.card_id);
-            countInput.value -= 1;
-            updateTotal();
+            if (getCartItemCount(card.card_id) > 0) {
+                removeFromCartOne(card.card_id);
+                countInput.value -= 1;
+                if (getCartItemCount(card.card_id) <= card.count)
+                    countInput.classList.remove('invalid');
+                updateTotal();
+            }
         });
         clone.querySelector('.col-price').textContent = toMoney(card.price);
         clone.querySelector('.delete-btn').addEventListener('click', () => {

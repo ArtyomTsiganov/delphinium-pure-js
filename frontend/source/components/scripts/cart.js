@@ -4,8 +4,8 @@ const loadedCart = localStorage.getItem("cart");
 const cart = loadedCart ? new Map(JSON.parse(loadedCart)) : new Map();
 cart.orderId = undefined;
 
-window.addEventListener('pagehide', () => {
-    
+window.addEventListener('pagehide', async () => {
+    await api.delete(`/orders/${cart.orderId}`);
 });
 
 function saveCart() {
@@ -62,7 +62,7 @@ export async function validateCartOrder() {
         cart.orderId = response.order_id;
         return true;
     }).catch(error => {
-        if (error.message === '422') {
+        if (error.message === '400') {
             return false;
         }
         throw error;
