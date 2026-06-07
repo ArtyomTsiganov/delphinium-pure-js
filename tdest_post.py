@@ -83,7 +83,7 @@ cards = [
     "category_id": 1
   }
 ]
-response = requests.post('http://31.129.99.234:8000/cards', json=cards)
+response = requests.post('http://127.0.0.1:8000/cards', json=cards)
 print(response.status_code)
 print(response.json())
 
@@ -102,13 +102,13 @@ categories = [
   }
 ]
 
-response = requests.post('http://31.129.99.234:8000/cards/category', json=categories)
+response = requests.post('http://127.0.0.1:8000/cards/category', json=categories)
 print(response.status_code)
 print(response.json())
 
 import requests
 
-BASE_URL = "http://31.129.99.234:8000"
+BASE_URL = "http://127.0.0.1:8000"
 
 cards = [
     {

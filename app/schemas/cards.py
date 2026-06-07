@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, field_serializer
 
 from decimal import Decimal
 from typing import List, Optional
@@ -41,3 +41,7 @@ class CardResponse(CardBase):
 
     class Config:
         from_attributes = True
+
+    @field_serializer('price')
+    def serialize_price(self, price: Decimal) -> str:
+        return str(price.normalize())

@@ -4,9 +4,10 @@ from typing import List, Optional, TYPE_CHECKING
 from enum import Enum
 
 from app.database import Base
+import uuid
 
 from sqlalchemy import Column, Integer, String, BIGINT, VARCHAR, DECIMAL, TEXT, ARRAY, TIMESTAMP, BigInteger, \
-    ForeignKey, Numeric
+    ForeignKey, Numeric, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import DateTime, func
 
@@ -41,7 +42,7 @@ class OrderItems(Base):
         ForeignKey("cards.card_id"), primary_key=True
     )
 
-    price: Mapped[Decimal] = mapped_column(Numeric)
+    price: Mapped[Decimal] = mapped_column(Numeric(10, 2))
     count: Mapped[int] = mapped_column(Integer)
 
     order: Mapped["Orders"] = relationship(back_populates="card_associations")
@@ -53,6 +54,12 @@ class Orders(Base):
     __tablename__ = "order_infos"
 
     order_id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    public_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        default=uuid.uuid4,
+        unique=True,
+        index=True
+    )
 
     status: Mapped[OrderStatus] = mapped_column(
         String, default=OrderStatus.PENDING
@@ -76,4 +83,8 @@ class Orders(Base):
     comment:  Mapped[str] = mapped_column(String, nullable=True)
 
 
-    card_associations: Mapped[List["OrderItems"]] = relationship(back_populates="order")
+    card_associations: Mapped[List["OrderItems"]] = relationship(
+        back_populates="order",
+        cascade="all, delete-orphan",
+        passive_deletes=True
+    )

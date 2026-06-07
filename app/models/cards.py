@@ -31,7 +31,7 @@ class Cards(Base):
     category_id: Mapped[int] = mapped_column(ForeignKey("categories.category_id"))
     short_name: Mapped[Optional[str]] = mapped_column(String)
 
-    price: Mapped[Decimal] = mapped_column(Numeric)
+    price: Mapped[Decimal] = mapped_column(Numeric(10, 2))
     count: Mapped[int] = mapped_column(Integer)
     description: Mapped[str] = mapped_column(String)
     image_url: Mapped[str] = mapped_column(String)
