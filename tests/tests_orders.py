@@ -426,3 +426,57 @@ async def test_change_order_status_invalid_order(client):
     data = response.json()
 
     assert "не найден" in data["detail"]
+
+
+import uuid
+
+
+async def test_delete_order_success(client):
+    await prepare_card(client)
+
+    create_resp = await client.post(
+        "/orders/",
+        json=[
+            {
+                "card_id": 1,
+                "count": 2
+            }
+        ]
+    )
+
+    public_id = create_resp.json()["public_id"]
+
+    response = await client.delete(f"/orders/{public_id}/")
+
+    assert response.status_code == 200
+
+
+async def test_delete_order_not_found(client):
+    fake_uuid = uuid.uuid4()
+
+    response = await client.delete(f"/orders/{fake_uuid}/")
+
+    assert response.status_code == 404
+
+
+async def test_delete_order_restores_count(client):
+    await prepare_card(client)
+
+    create_resp = await client.post(
+        "/orders/",
+        json=[
+            {
+                "card_id": 1,
+                "count": 4
+            }
+        ]
+    )
+
+    public_id = create_resp.json()["public_id"]
+
+    await client.delete(f"/orders/{public_id}/")
+
+    response = await client.get("/cards")
+
+    cards = response.json()
+    assert cards[0]["count"] == 10
