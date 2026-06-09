@@ -31,6 +31,16 @@ class OrderTypes(str, Enum):
     EMAIL = "email"
     ANOTHER = "another"
 
+    @property
+    def cost(self) -> Decimal:
+        _costs = {
+            OrderTypes.PICKUP: Decimal("0.00"),
+            OrderTypes.MAIL: Decimal("350.00"),      # Почта стоит 350р
+            OrderTypes.EMAIL: Decimal("0.00"),     # На мыло — бесплатно
+            OrderTypes.ANOTHER: Decimal("500.00"),   # Курьер или инлайн-доставка
+        }
+        return _costs[self]
+
 
 class OrderItems(Base):
     __tablename__ = "orders"

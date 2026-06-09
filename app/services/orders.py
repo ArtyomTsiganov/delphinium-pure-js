@@ -135,5 +135,18 @@ class OrderService:
     @staticmethod
     async def delete_order(db: AsyncSession, public_id: uuid.UUID) -> None:
         order = await OrderService.get_order_by_public_id(db, public_id)
+        items = await OrderService._get_items_by_order_id(db, order.order_id)
+
+        card_ids = [item.card_id for item in items]
+        query = select(Cards).where(Cards.card_id.in_(card_ids)).with_for_update()
+        result = await db.execute(query)
+        cards_dict = {c.card_id: c for c in result.scalars().all()}
+
+        for item in items:
+            product_card = cards_dict.get(item.card_id)
+            if product_card is None:
+                raise ProductNotFoundError(item.card_id)
+            product_card.count += item.count
+
         await db.delete(order)
         await db.commit()
