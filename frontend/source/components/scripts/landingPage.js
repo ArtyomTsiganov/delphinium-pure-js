@@ -68,7 +68,7 @@ const landingPage = parseHTML(`
     <div class="rolling-zone">
         <div class="rolling-header">
             <p>Рекомендуемые товары</p>
-            <button class="rolling-view-all-btn">посмотреть все</button>
+            <button class="rolling-view-all-btn">посмотреть все товары</button>
         </div>
 
         <button class="rolling-btn rolling-left-btn">←</button>
@@ -82,7 +82,7 @@ const landingPage = parseHTML(`
     <div class="rolling-zone">
         <div class="rolling-header">
             <p>Наши книги</p>
-            <button class="rolling-view-all-btn">посмотреть все</button>
+            <button class="rolling-view-all-btn">посмотреть все книги</button>
         </div>
 
         <button class="rolling-btn rolling-left-btn">←</button>

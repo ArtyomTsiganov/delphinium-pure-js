@@ -83,7 +83,7 @@ cards = [
     "category_id": 1
   }
 ]
-response = requests.post('http://127.0.0.1:8000/cards', json=cards)
+response = requests.post('http://127.0.0.1:8000/api/cards', json=cards)
 print(response.status_code)
 print(response.json())
 
@@ -102,7 +102,7 @@ categories = [
   }
 ]
 
-response = requests.post('http://127.0.0.1:8000/cards/category', json=categories)
+response = requests.post('http://127.0.0.1:8000/api/cards/category', json=categories)
 print(response.status_code)
 print(response.json())
 
@@ -159,7 +159,7 @@ cards = [
 ]
 
 response = requests.post(
-    f"{BASE_URL}/cards",
+    f"{BASE_URL}/api/cards",
     json=cards,
     headers={
         "Content-Type": "application/json"
