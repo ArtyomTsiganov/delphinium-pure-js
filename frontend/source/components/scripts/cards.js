@@ -17,9 +17,13 @@ const cardTemplate = parseHTML(`
 `);
 
 export async function loadCards(container, params) {
-    container.querySelectorAll('.product-card').forEach(card => card.remove());
+    container.querySelectorAll('.product-card, .message-not-found').forEach(card => card.remove());
     try {
         const cards = await api.get('/cards', params);
+        if (cards?.length === 0)
+            container.appendChild(parseHTML(`
+            <p class="message-not-found">Товары отсутствуют</p>
+            `));
         cards.forEach(card => {
             const clone = cardTemplate.cloneNode(true);
             clone.id = card.card_id;

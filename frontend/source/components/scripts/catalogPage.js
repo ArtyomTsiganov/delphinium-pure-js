@@ -1,6 +1,6 @@
 import { loadCards } from "./cards.js";
 import { parseHTML } from "./api.js";
-import { renderMainWith } from "./mainRender.js";
+import {renderMainLoading, renderMainWith} from "./mainRender.js";
 import { navigateTo } from "./navigation.js";
 import { makeSearcher } from "./searcher.js";
 
@@ -42,12 +42,14 @@ async function loadBlockCatalog() {
         await loadCards(flowersCatalog, { count: 1000, orderBy: 'name', category_filter: 'flowers', name_filter:  state.name_filter});
         await loadCards(booksCatalog, { count: 1000, orderBy: 'name', category_filter: 'books' , name_filter:  state.name_filter});
     } else {
+        searcherLine.value = '';
         await loadCards(flowersCatalog, { count: 1000, orderBy: 'name', category_filter: 'flowers' });
         await loadCards(booksCatalog, { count: 1000, orderBy: 'name', category_filter: 'books' });
     }
 }
 
 export async function renderCatalogPage() {
-    renderMainWith(catalogPage);
+    renderMainLoading();
     await loadBlockCatalog();
+    renderMainWith(catalogPage);
 }

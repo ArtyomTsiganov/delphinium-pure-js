@@ -1,7 +1,8 @@
-import { renderMainWith } from "./mainRender.js";
+import {renderMainLoading, renderMainWith} from "./mainRender.js";
 import { parseHTML, toMoney } from "./api.js";
 import { addToCartOne } from "./cart.js";
 import {showToastAddToCart} from "./toastAlert.js";
+import {navigateBack} from "./navigation.js";
 
 
 const productPage = parseHTML(`
@@ -50,11 +51,12 @@ function setProductData() {
     productPage.querySelector('.product-description').textContent = card.description;
     productPage.querySelector('.back-link').addEventListener("click", e => {
         e.preventDefault();
-        history.go(-1);
+        navigateBack();
     });
 }
 
 export async function renderProductPage() {
-    renderMainWith(productPage);
+    renderMainLoading();
     setProductData();
+    renderMainWith(productPage);
 }

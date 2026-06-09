@@ -1,15 +1,32 @@
 import {api} from "./api.js";
+import {getUserData} from "./userDataManager.js";
 
 const loadedCart = localStorage.getItem("cart");
 const cart = loadedCart ? new Map(JSON.parse(loadedCart)) : new Map();
 cart.orderId = undefined;
+clearOrderId();
 
 window.addEventListener('pagehide', async () => {
-    await api.delete(`/orders/${cart.orderId}`);
+    await revokeOrderId();
 });
 
 function saveCart() {
     localStorage.setItem("cart", JSON.stringify([...cart.entries()]));
+}
+
+function setOrderId(id) {
+    cart.orderId = id;
+    localStorage.setItem("cart.orderId", id);
+}
+
+function clearOrderId() {
+    cart.orderId = undefined;
+    localStorage.removeItem("cart.orderId");
+}
+
+export async function revokeOrderId() {
+    await api.delete(`/orders/${cart.orderId}`);
+    clearOrderId();
 }
 
 export function getCartItemCount(goodsItemId) {
@@ -59,7 +76,29 @@ export async function validateCartOrder() {
         "/orders/",
         cart.entries().map(([card_id, count]) => ({card_id: card_id, count: count})).toArray()
     ).then(response => {
-        cart.orderId = response.order_id;
+        setOrderId(response.public_id);
+        return true;
+    }).catch(error => {
+        if (error.message === '400') {
+            return false;
+        }
+        throw error;
+    });
+}
+
+export async function submitCartOrder(orderType) {
+    return api.put(
+        `/orders/${cart.orderId}/checkout`,
+        {
+            "name": getUserData('fio'),
+            "email": getUserData('email'),
+            "phone_number": getUserData('phone'),
+            "order_type": orderType,
+            "postal_code": getUserData('zipcode'),
+            "address": getUserData('address'),
+            "comment": getUserData('comment'),
+        }
+    ).then(response => {
         return true;
     }).catch(error => {
         if (error.message === '400') {

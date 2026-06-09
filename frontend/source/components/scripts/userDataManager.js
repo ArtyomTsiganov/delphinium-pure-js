@@ -30,7 +30,3 @@ export function setUserData(field, value) {
 export function getUserData(field) {
     return userData.get(field);
 }
-
-export function getUserDataAll() {
-    return new Map(userData.entries());
-}

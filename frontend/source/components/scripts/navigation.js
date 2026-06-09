@@ -8,26 +8,30 @@ function render404() {
     renderMainWith(h404);
 }
 
-function router(url=null) {
+function routeTo(url=null) {
     (routes[url || window.location.pathname] || render404)();
 }
 
 export function setRoutes(newRoutes) {
     routes = newRoutes;
-    router();
+    routeTo(window.location.pathname);
 }
 
 export function navigateTo(url, state=null) {
     history.pushState(state, null, url);
-    router(url);
+    routeTo(url);
     window.scrollTo({
         top: 0,
         behavior: 'smooth'
     });
 }
 
+export function navigateBack() {
+    history.back();
+}
+
 window.addEventListener('popstate', e => {
-    router(e.target.location.pathname);
+    routeTo(e.target.location.pathname);
 });
 
 // document.addEventListener('click', (e) => {

@@ -1,5 +1,6 @@
 import {renderMainWith} from "./mainRender.js";
 import {parseHTML} from "./api.js";
+import {navigateBack} from "./navigation.js";
 
 const privacyPolicy = parseHTML(`
 <div class="document-page">
@@ -27,7 +28,7 @@ const privacyPolicy = parseHTML(`
 
 privacyPolicy.querySelector('.back-link').addEventListener("click", e => {
     e.preventDefault();
-    history.go(-1);
+    navigateBack();
 });
 
 export function renderPrivacyPolicyPage() {
@@ -77,7 +78,7 @@ const clientAgreement = parseHTML(`
 
 clientAgreement.querySelector('.back-link').addEventListener("click", e => {
     e.preventDefault();
-    history.go(-1);
+    navigateBack();
 });
 
 export function renderClientAgreementPage() {

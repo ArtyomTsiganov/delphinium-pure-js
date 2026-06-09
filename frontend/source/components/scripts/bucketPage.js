@@ -1,13 +1,13 @@
 import {api, parseHTML, toMoney} from "./api.js";
-import { renderMainWith } from "./mainRender.js";
+import {renderMainLoading, renderMainWith} from "./mainRender.js";
 import {
     addToCartOne,
     clearCart,
     getCartItemCount,
     getCartItemsIds,
     removeFromCartAll,
-    removeFromCartOne,
-    setCartItemCount, validateCartOrder
+    removeFromCartOne, revokeOrderId,
+    setCartItemCount, submitCartOrder, validateCartOrder
 } from "./cart.js";
 import {navigateTo} from "./navigation.js";
 import {showToastAlert, showToastError, showToastSuccess} from "./toastAlert.js";
@@ -201,13 +201,16 @@ cartPage.querySelector('.next-step-btn').addEventListener('click', e => {
     } else
         showToastAlert('Выберите способ получения');
 });
-cartPage.querySelector('.prev-step-btn').addEventListener('click', () => changeStep(1));
+cartPage.querySelector('.prev-step-btn').addEventListener('click', async () => {
+    changeStep(1);
+    await revokeOrderId();
+});
 
 function updateTotal() {
     let cartTotal = 0;
     cartList.querySelectorAll('.cart-item').forEach(item => {
         const itemId = parseInt(item.id);
-        const stackPrice = cards.get(itemId).price * getCartItemCount(itemId);
+        const stackPrice = cards.get(itemId).price * (getCartItemCount(itemId) || 0);
         item.querySelector('.item-total-price').textContent = toMoney(stackPrice);
         cartTotal += stackPrice;
     });
@@ -236,22 +239,36 @@ form.addEventListener('input', (e) => {
     }
 });
 
-submitBtn.addEventListener('click', (e) => {
+submitBtn.addEventListener('click', async (e) => {
     e.preventDefault();
     let isValid = true;
-    form.querySelectorAll('input').forEach(item => {
-        if (item.id === 'agreement' ? !item.checked : !checkDataValid(item.name, item.value)) {
+    form.querySelectorAll('input:not(#agreement)').forEach(item => {
+        if (!checkDataValid(item.name, item.value)) {
             item.classList.add('invalid');
-            if (item.id === 'agreement')
-                showToastAlert(`Ознакомьтесь с условиями пользовательского соглашения`);
-            else
-                showToastAlert(`Некорректный ввод: ${item.previousElementSibling.textContent}`);
+            showToastAlert(`Некорректный ввод: ${item.previousElementSibling.textContent}`);
             isValid = false;
         }
     });
+    if (!form.querySelector('#agreement').checked) {
+        showToastAlert(`Ознакомьтесь с условиями пользовательского соглашения`);
+        isValid = false;
+    }
     if (isValid) {
-        clearCart();
-        showToastSuccess('Заказ отправлен в магазин');
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Отправка...';
+        submitCartOrder(currentDeliveryOptionStatus).then(value => {
+            if (value) {
+                clearCart();
+                showToastSuccess('Заказ отправлен в магазин');
+            } else {
+                showToastAlert('Не получилось собрать заказ');
+            }
+        }).catch(reason => {
+            showToastError(`Ошибка сервера: ${reason}`);
+        }).finally(() => {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Отправить заказ';
+        });
     }
 })
 
@@ -327,8 +344,9 @@ async function loadCart() {
 }
 
 export async function renderBucketPage() {
-    renderMainWith(cartPage);
+    renderMainLoading();
     changeStep(1);
     await loadCart();
     updateTotal();
+    renderMainWith(cartPage);
 }

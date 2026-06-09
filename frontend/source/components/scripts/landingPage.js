@@ -1,6 +1,6 @@
 import { loadCards } from "./cards.js";
 import { parseHTML } from "./api.js";
-import { renderMainWith } from "./mainRender.js";
+import {renderMainLoading, renderMainWith} from "./mainRender.js";
 import { navigateTo } from "./navigation.js";
 import { makeSearcher } from "./searcher.js";
 
@@ -120,6 +120,7 @@ async function renderCardsBlocks() {
 }
 
 export async function renderLandingPage() {
-    renderMainWith(landingPage);
+    renderMainLoading();
     await renderCardsBlocks();
+    renderMainWith(landingPage);
 }
