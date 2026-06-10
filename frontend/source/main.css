@@ -43,6 +43,8 @@ body {
 
 .collector {
     flex: 1;
+    min-height: stretch !important;
+    max-height: fit-content;
 }
 
 .hero {
@@ -255,6 +257,8 @@ header {
     }
 
     .header-item {
+        border: none;
+        background-color: transparent;
         color: var(--color-white);
         padding: 8px 16px;
         font-family: 'DM Sans', sans-serif;
@@ -637,6 +641,7 @@ footer {
         gap: 8px;
         font-size: 20px;
         font-weight: 500;
+        user-select: none;
         color: #a3b8b5;
     }
 
@@ -1086,16 +1091,23 @@ footer {
     }
 }
 
-.loading-circle {
+.loading-page {
     display: flex;
-    align-self: center;
-    justify-self: center;
-    width: 80px;
-    height: 80px;
-    border: 10px solid var(--color-primary-soft);
-    border-top: 10px solid var(--color-primary);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: stretch;
+    
+    .loading-circle {
+        display: flex;
+        width: 80px;
+        height: 80px;
+        border: 10px solid var(--color-primary-soft);
+        border-top: 10px solid var(--color-primary);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
 }
 
 @keyframes spin {

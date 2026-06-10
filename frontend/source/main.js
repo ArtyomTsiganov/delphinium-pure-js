@@ -4,13 +4,14 @@ import { renderCatalogPage } from "./components/scripts/catalogPage.js";
 import { renderBucketPage } from "./components/scripts/bucketPage.js";
 import { renderProductPage } from "./components/scripts/productPage.js";
 import {renderClientAgreementPage, renderPrivacyPolicyPage} from "./components/scripts/documentsPages.js";
+import {renderOrderListPage} from "./components/scripts/ordersListPage.js";
 
 
 setRoutes({
     '/': renderLandingPage,
     '/catalog': renderCatalogPage,
     '/cart': renderBucketPage,
-    '/deliveries': () => {},
+    '/deliveries': renderOrderListPage,
     '/product': renderProductPage,
     '/privacy-policy': renderPrivacyPolicyPage,
     '/client-agreement': renderClientAgreementPage,

@@ -223,7 +223,7 @@ function updateTotal() {
 }
 
 form.querySelectorAll('input,textarea').forEach(item => {
-    if (item.id !== 'agreement') {
+    if (item.id !== 'agreement' && getUserData(item.name) !== undefined) {
         item.value = getUserData(item.name);
     }
 });

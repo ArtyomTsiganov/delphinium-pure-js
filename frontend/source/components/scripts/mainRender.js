@@ -1,7 +1,9 @@
 import {parseHTML} from "./api.js";
 
 const mainLoadingBlock = parseHTML(`
-<div class="loading-circle"></div>
+<div class="loading-page">
+    <div class="loading-circle"></div>
+</div>
 `);
 
 const collector = document.querySelector("#collector");
