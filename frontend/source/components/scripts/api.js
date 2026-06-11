@@ -1,13 +1,14 @@
 export const api = {
-    async get(endpoint, params = {}) {
-        const url = new URL(`${window.location.origin}/api${endpoint}`); // http://127.0.0.1:8000
-        Object.keys(params).forEach(key => {
-            if (Array.isArray(params[key]))
-                params[key].forEach(el => url.searchParams.append(key, el));
-            else
-                url.searchParams.append(key, params[key]);
-        });
-
+    async get(endpoint, params = undefined) {
+        const url = new URL(`${window.location.origin}/api${endpoint}`);
+        if (params) {
+            Object.keys(params).forEach(key => {
+                if (Array.isArray(params[key]))
+                    params[key].forEach(el => url.searchParams.append(key, el));
+                else
+                    url.searchParams.append(key, params[key]);
+            });
+        }
         const response = await fetch(url);
         if (!response.ok)
             throw new Error('API Error');
@@ -64,6 +65,18 @@ export const api = {
             throw new Error('API Error');
         return response.json();
     },
+    
+    getDeliveryPrice() {
+        return 400;
+    },
+    
+    getDeliveryWay() {
+        return 'Посылка 1-го класса обыкновенная - по тарифам "Почта России"';
+    },
+    
+    getShopAddress() {
+        return 'улица Кирова, 65, село Большебрусянское, Белоярский муниципальный округ, Свердловская область';
+    },
 };
 
 export function parseHTML(htmlString) {
@@ -78,7 +91,7 @@ export function toMoney(value) {
     return new Intl.NumberFormat('ru-RU', {
         style: 'currency',
         currency: 'RUB',
-        minimumFractionDigits: 0,
+        minimumFractionDigits: 2,
         maximumFractionDigits: 2,
-    }).format(number);
+    }).format(number).replace(/,00/, '');
 }

@@ -99,7 +99,7 @@ export async function submitCartOrder(orderType) {
             "comment": getUserData('comment'),
         }
     ).then(response => {
-        return true;
+        return response.public_id;
     }).catch(error => {
         if (error.message === '400') {
             return false;

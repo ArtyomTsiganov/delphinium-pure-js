@@ -14,7 +14,7 @@ import {showToastAlert, showToastError, showToastSuccess} from "./toastAlert.js"
 import {checkDataValid, getUserData, setUserData} from "./userDataManager.js";
 
 
-const deliveryPrice = 400;
+const deliveryPrice = api.getDeliveryPrice();
 let currentDeliveryOptionStatus = undefined;
 
 const cartListItem = parseHTML(`
@@ -50,16 +50,16 @@ const cartListItem = parseHTML(`
 const cartPage = parseHTML(`
 <div class="cart-page" xmlns="http://www.w3.org/1999/html">
     
-    <nav class="checkout-tabs">
-        <div class="tab-item active">
-            <!--<span class="tab-num">1.</span>-->
-            <span class="tab-text">Товары</span>
-        </div>
-        <div class="tab-item">
-            <!--<span class="tab-num">2.</span>-->
-            <span class="tab-text">Контакты</span>
-        </div>
-    </nav>
+<!--    <nav class="checkout-tabs">-->
+<!--        <div class="tab-item active">-->
+<!--            &lt;!&ndash;<span class="tab-num">1.</span>&ndash;&gt;-->
+<!--            <span class="tab-text">Товары</span>-->
+<!--        </div>-->
+<!--        <div class="tab-item">-->
+<!--            &lt;!&ndash;<span class="tab-num">2.</span>&ndash;&gt;-->
+<!--            <span class="tab-text">Контакты</span>-->
+<!--        </div>-->
+<!--    </nav>-->
 
     <div class="checkout-steps">
         
@@ -85,7 +85,7 @@ const cartPage = parseHTML(`
                         Самовывоз
                         <input type="radio" name="delivery_method" value="pickup" class="delivery-radio">
                     </label>
-                    <span class="delivery-desc">Из магазина по адресу: *Артём Ц. пока не спалился*</span>
+                    <span class="delivery-desc">Из магазина по адресу: ${api.getShopAddress()}</span>
                     <span class="delivery-price">${toMoney(0)}</span>
                 </div>
                 <div class="delivery-row">
@@ -93,7 +93,7 @@ const cartPage = parseHTML(`
                         Почта России
                         <input type="radio" name="delivery_method" value="post" class="delivery-radio">
                     </label>
-                    <span class="delivery-desc">Посылка 1-го класса обыкновенная - по тарифам "Почта России"</span>
+                    <span class="delivery-desc">${api.getDeliveryWay()}</span>
                     <span class="delivery-price">${toMoney(deliveryPrice)}</span>
                 </div>
             </div>
@@ -179,7 +179,7 @@ function changeStep(stepNumber) {
             tab.classList.remove('active');
         }
     });
-    activeStepChanger(tabsTags);
+    //activeStepChanger(tabsTags);
     activeStepChanger(tabs);
 }
 
@@ -223,7 +223,7 @@ function updateTotal() {
 }
 
 form.querySelectorAll('input,textarea').forEach(item => {
-    if (item.id !== 'agreement') {
+    if (item.id !== 'agreement' && getUserData(item.name) !== undefined) {
         item.value = getUserData(item.name);
     }
 });
@@ -256,10 +256,11 @@ submitBtn.addEventListener('click', async (e) => {
     if (isValid) {
         submitBtn.disabled = true;
         submitBtn.textContent = 'Отправка...';
-        submitCartOrder(currentDeliveryOptionStatus).then(value => {
-            if (value) {
+        submitCartOrder(currentDeliveryOptionStatus).then(public_id => {
+            if (public_id) {
                 clearCart();
-                showToastSuccess('Заказ отправлен в магазин');
+                showToastSuccess('Заказ отправлен в магазин\nПроверьте email для дальнейших действий');
+                setTimeout(() => navigateTo(`/order?public_id=${public_id}`), 500);
             } else {
                 showToastAlert('Не получилось собрать заказ');
             }
@@ -294,7 +295,7 @@ async function loadCart() {
         cartItemTitle.addEventListener('click', e => {
             e.preventDefault();
             navigateTo('/product', card);
-        })
+        });
         if (!card.image) {
             clone.querySelector('.cart-item-img').setAttribute('src', "/assets/product-card-img-demo.png");
         } else {
