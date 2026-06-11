@@ -1,4 +1,4 @@
-from pydantic import BaseModel, field_serializer
+from pydantic import BaseModel, field_serializer, computed_field
 
 from decimal import Decimal
 from typing import List, Optional
@@ -45,3 +45,8 @@ class CardResponse(CardBase):
     @field_serializer('price')
     def serialize_price(self, price: Decimal) -> str:
         return str(price.normalize())
+
+    @computed_field
+    @property
+    def image(self) -> str:
+        return self.image_url

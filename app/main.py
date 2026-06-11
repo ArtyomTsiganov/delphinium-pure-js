@@ -7,6 +7,7 @@ from fastapi.staticfiles import StaticFiles
 
 from app.database import engine, Base
 from app.routers import cards, orders
+from app.seeder import seed_data
 
 
 @asynccontextmanager
@@ -17,6 +18,8 @@ async def lifespan(app: FastAPI):
         await conn.run_sync(Base.metadata.create_all)
 
     print("Таблицы успешно созданы!")
+
+    await seed_data()
 
     yield
 
