@@ -32,27 +32,27 @@ const productPage = parseHTML(`
 </div>
 `);
 
+let card = undefined;
+
+productPage.querySelector('.back-link').addEventListener("click", e => {
+    e.preventDefault();
+    navigateBack();
+});
+productPage.querySelector('.add-to-cart-btn').addEventListener('click', () => {
+    addToCartOne(card.card_id);
+    showToastAddToCart(card.short_name ?? card.name);
+});
+
 function setProductData() {
-    const card = history.state;
+    card = history.state;
     if (!card.image)
         productPage.querySelector('.main-product-img').setAttribute('src', 'assets/product-card-img-demo.png');
     else
         productPage.querySelector('.main-product-img').setAttribute('src', card.image);
     productPage.querySelector('.price').textContent = toMoney(card.price);
     productPage.querySelector('.stock b').textContent = card.count;
-    productPage.querySelector('.add-to-cart-btn').replaceWith(
-        productPage.querySelector('.add-to-cart-btn').cloneNode(true)
-    );
-    productPage.querySelector('.add-to-cart-btn').addEventListener('click', () => {
-        addToCartOne(card.card_id);
-        showToastAddToCart(card.short_name ?? card.name);
-    });
     productPage.querySelector('.product-title').textContent = card.name;
     productPage.querySelector('.product-description').textContent = card.description;
-    productPage.querySelector('.back-link').addEventListener("click", e => {
-        e.preventDefault();
-        navigateBack();
-    });
 }
 
 export async function renderProductPage() {
