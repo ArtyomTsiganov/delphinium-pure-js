@@ -463,9 +463,8 @@ footer {
 
 .product-card {
     margin: 5px;
-    min-width: 280px !important;
-    max-width: 280px !important;
-    height: stretch;
+    width: 280px !important;
+    height: fit-content;
     border: none;
 
     a {
@@ -479,7 +478,7 @@ footer {
 
     img {
         width: 280px;
-        height: 280px;
+        height: 300px;
         object-fit: cover;
         display: block;
     }
