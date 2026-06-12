@@ -462,16 +462,23 @@ footer {
 }
 
 .product-card {
+    display: flex;
+    flex-direction: column;
     margin: 5px;
     width: 280px !important;
-    height: fit-content;
+    height: stretch;
     border: none;
 
     a {
         color: var(--color-primary);
         text-decoration: none;
+        width: 100%;
+        height: stretch;
+        
+        p {
+            text-wrap-mode: wrap;
+        }
     }
-    
     a:hover {
         text-decoration: underline;
     }
@@ -480,7 +487,7 @@ footer {
         width: 280px;
         height: 300px;
         object-fit: cover;
-        display: block;
+        flex: 0 0 300px;
     }
 
     p {
@@ -488,27 +495,27 @@ footer {
         padding: 5px;
         font-size: 20px;
     }
-
-    button {
-        background-color: var(--color-white);
-        color: var(--color-primary);
-        border: 1px solid var(--color-primary);
-        border-radius: 5px;
-        margin: 0;
-        padding: 0 15px;
-        font-size: 16px;
-        cursor: pointer;
-    }
     
-    button:hover {
-        background-color: var(--color-primary-dark);
-        color: var(--color-primary-soft);
-    }
-
     .product-card-bottom {
-        display: inline-flex;
+        display: flex;
+        flex: 0 0;
         justify-content: space-between;
         width: stretch;
+        
+        button {
+            background-color: var(--color-white);
+            color: var(--color-primary);
+            border: 1px solid var(--color-primary);
+            border-radius: 5px;
+            margin: 0;
+            padding: 0 15px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: var(--color-primary-dark);
+            color: var(--color-primary-soft);
+        }
     }
 }
 
