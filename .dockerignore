@@ -2,3 +2,6 @@
 __pycache__
 .git
 .pytest_cache
+.env
+sql_app.db
+sent_emails/

@@ -1,10 +1,11 @@
 import uuid
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
 from app.models import OrderStatus
+from app.mailer import build_order_link, send_order_created_email, send_status_changed_email
 from app.schemas.orders import OrderCreate, OrderItemCreate, OrderResponse, OrderItemResponse, OrderOnlyItemResponse
 from app.schemas.schemas import SuccessResponse
 from app.services.orders import (
@@ -50,26 +51,49 @@ async def create_order(
 async def checkout_order(
     public_id: uuid.UUID,
     user_info: OrderCreate,
+    background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db)
 ):
     try:
-        return await OrderService.checkout_order(db, public_id, user_info)
+        order = await OrderService.checkout_order(db, public_id, user_info)
     except OrderNotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e))
     except InvalidOrderStatusError as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+    if order.email:
+        background_tasks.add_task(
+            send_order_created_email,
+            order.email,
+            build_order_link(order.public_id),
+            order.public_id,
+            order.name,
+        )
+    return order
 
 
 @router.put("/{public_id}/change", response_model=OrderResponse)
 async def change_order_status(
     public_id: uuid.UUID,
     new_status: OrderStatus,
+    background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db)
 ):
     try:
-        return await OrderService.change_status(db, public_id, new_status)
+        order = await OrderService.change_status(db, public_id, new_status)
     except OrderNotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e))
+
+    if order.email:
+        background_tasks.add_task(
+            send_status_changed_email,
+            order.email,
+            build_order_link(order.public_id),
+            new_status,
+            order.public_id,
+            order.name,
+        )
+    return order
 
 @router.get("/{public_id}/items", response_model=list[OrderOnlyItemResponse])
 async def get_order_items_by_id(

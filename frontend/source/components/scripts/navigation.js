@@ -9,7 +9,8 @@ function render404() {
 }
 
 function routeTo(url=null) {
-    (routes[(url || window.location.pathname).replace(/\?\s+$/, '')] || render404)();
+    const path = (url || window.location.pathname).split('?')[0];
+    (routes[path] || render404)();
 }
 
 export function setRoutes(newRoutes) {
