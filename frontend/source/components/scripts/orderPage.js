@@ -166,12 +166,16 @@ async function loadOrdersList() {
     );
     
     let totalPrice = 0;
-    orderItems.forEach(item => {
+    orderItems.forEach((item, index) => {
         const clone = orderListItem.cloneNode(true);
         clone.id = item.card_id;
-        totalPrice += parseFloat(item.price);
+        
         clone.querySelector('.col-price').textContent = toMoney(item.price);
         clone.querySelector('.col-quantity').textContent = item.count;
+        const itemTotalPrice = parseFloat(item.price) * parseInt(item.count);
+        totalPrice += itemTotalPrice;
+        clone.querySelector('.col-total').textContent = itemTotalPrice;
+        
         const card = cards.get(item.card_id);
         const cartItemTitle = clone.querySelector('.order-item-title');
         if (card) {
@@ -184,7 +188,10 @@ async function loadOrdersList() {
         } else {
             cartItemTitle.textContent = '-';
         }
-        orderList.appendChild(clone);
+        if (index === 0)
+            orderList.replaceChildren(clone);
+        else
+            orderList.appendChild(clone);
     });
     
     const orderInfo = await api.get(`/orders/${orderId}/`);
