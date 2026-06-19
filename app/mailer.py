@@ -80,15 +80,14 @@ async def _send_email(to_email: str, subject: str, html: str, preview_tag: str) 
             path.write_text(html, encoding="utf-8")
             print(f"[mailer] DEV-превью (SMTP не настроен): письмо для {to_email} "
                   f"сохранено в {path}")
-        except Exception as e:  # noqa: BLE001 — best-effort, не роняем заказ
+        except Exception as e:
             print(f"[mailer] Не удалось сохранить превью письма: {e}")
         return
 
     try:
-        # smtplib блокирующий — уводим в отдельный поток, чтобы не вешать event loop
         await asyncio.to_thread(_smtp_send, to_email, subject, html)
         print(f"[mailer] Письмо отправлено на {to_email} (SMTP {SMTP_HOST})")
-    except Exception as e:  # noqa: BLE001 — сеть/SMTP не должны ломать заказ
+    except Exception as e:
         print(f"[mailer] Ошибка отправки по SMTP на {to_email}: {e}")
 
 
