@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 class OrderStatus(str, Enum):
     PENDING = "pending"       # Создан, ожидает проверки
     RESERVED = "reserved"     # Товар зарезервирован
-    COMPLETED = "completed"   # Данные клиента заполнены, заказ оформлен
+    PENDING_PAYMENT = "pending_payment"   # Данные клиента заполнены, заказ оформлен
     PAID = "paid"             # Заказ оплачен
     SHIPPING = "shipping"     # Заказ отправлен
     DELIVERED = "delivered"   # Заказ доставлен
@@ -27,7 +27,7 @@ class OrderStatus(str, Enum):
 
 class OrderTypes(str, Enum):
     PICKUP = "pickup" # самовывоз
-    MAIL = "mail"
+    MAIL = "post"
     EMAIL = "email"
     ANOTHER = "another"
 

@@ -26,7 +26,7 @@ _PREVIEW_DIR = Path(__file__).resolve().parent.parent / "sent_emails"
 STATUS_LABELS = {
     OrderStatus.PENDING: "Ожидает проверки",
     OrderStatus.RESERVED: "Зарезервирован",
-    OrderStatus.COMPLETED: "Оформлен",
+    OrderStatus.PENDING_PAYMENT: "Оформлен",
     OrderStatus.PAID: "Оплачен",
     OrderStatus.SHIPPING: "Отправлен",
     OrderStatus.DELIVERED: "Доставлен",

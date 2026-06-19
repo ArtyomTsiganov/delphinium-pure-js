@@ -117,7 +117,7 @@ class OrderService:
         order.postal_code = user_info.postal_code
         order.order_type = user_info.order_type
 
-        order.status = OrderStatus.COMPLETED
+        order.status = OrderStatus.PENDING_PAYMENT
 
         await db.commit()
         await db.refresh(order, attribute_names=["card_associations"])
