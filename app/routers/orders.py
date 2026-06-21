@@ -117,7 +117,7 @@ async def get_order_by_id(
         raise HTTPException(status_code=404, detail=str(e))
 
 
-@router.delete("/{public_id}/", response_model=SuccessResponse)
+@router.delete("/{public_id}", response_model=SuccessResponse)
 async def delete_order(
     public_id: uuid.UUID,
     db: AsyncSession = Depends(get_db)

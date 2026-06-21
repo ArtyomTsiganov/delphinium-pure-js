@@ -35,11 +35,6 @@ api_router.include_router(orders.router)
 
 app.include_router(api_router)
 
-# Такс что ещё нужно:
-# Функционал для админки, добавить удалить изменить товар
-# Добавить изображения для товара
-# Сделать функционал блога
-# Сделать функционал заказов
 # БД: https://drawsql.app/teams/artyomtsiganov/diagrams/shop-datebase
 
 app.mount("/source", StaticFiles(directory="frontend/source"), name="source")
