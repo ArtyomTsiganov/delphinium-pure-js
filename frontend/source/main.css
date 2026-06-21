@@ -1763,6 +1763,16 @@ footer {
         align-items: stretch;
         gap: 8px;
     }
+
+    .product-page .product-detail-main {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .product-page .product-left-col {
+        flex: 0 0 100%;
+        width: 100%;
+    }
 }
 
 @media (min-width: 769px) and (max-width: 1100px) {
