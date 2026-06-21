@@ -95,7 +95,19 @@ const landingPage = parseHTML(`
 </div>
 `);
 
-for (const roll of landingPage.querySelectorAll(".rolling-zone")) {
+const rollingZones = landingPage.querySelectorAll(".rolling-zone");
+
+function updateRollingButtons(roll) {
+    const rollingList = roll.querySelector(".rolling-list");
+    const hasOverflow = rollingList.scrollWidth > rollingList.clientWidth + 1;
+    roll.classList.toggle("rolling-zone-scrollable", hasOverflow);
+}
+
+function updateAllRollingButtons() {
+    rollingZones.forEach(updateRollingButtons);
+}
+
+for (const roll of rollingZones) {
     const rollingList = roll.querySelector(".rolling-list");
     roll.querySelector(".rolling-left-btn").addEventListener("click", e => {
         rollingList.scrollBy({left: -580, behavior: "smooth"});
@@ -117,10 +129,14 @@ landingPage.querySelectorAll('.rolling-view-all-btn').forEach(a => a.addEventLis
 async function renderCardsBlocks() {
     await loadCards(recommendedCatalog, { count: 9, orderBy: 'random', category_filter: 'flowers'});
     await loadCards(booksCatalog, { count: 3, orderBy: 'random', category_filter: 'books'});
+    requestAnimationFrame(updateAllRollingButtons);
 }
 
 export async function renderLandingPage() {
     renderMainLoading();
     await renderCardsBlocks();
     renderMainWith(landingPage);
+    requestAnimationFrame(updateAllRollingButtons);
 }
+
+window.addEventListener('resize', updateAllRollingButtons);
