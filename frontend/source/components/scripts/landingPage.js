@@ -33,19 +33,19 @@ const landingPage = parseHTML(`
                         <div class="gallery-column">
                             <div class="card card-sm">
                                 <span class="badge">Новое</span>
-                                <img src="https://images.unsplash.com/photo-1508610048659-a06b669e3321?q=80&w=500&auto=format&fit=crop" alt="Delphinium">
+                                <img src="assets/photo_2026-06-21_17-45-45.jpg" alt="Delphinium">
                             </div>
                             <div class="card card-sm">
                                 <span class="badge">Популярное</span>
-                                <img src="https://images.unsplash.com/photo-1508610048659-a06b669e3321?q=80&w=500&auto=format&fit=crop" alt="Delphinium">
-                                <div class="card-overlay-text">ТАКИЕ РАЗНЫЕ ДЕЛЬФИНИУМЫ!</div>
+                                <img class="" src="assets/photo_2026-06-21_17-47-00.jpg" alt="Delphinium">
+                                <div class="card-overlay-text"></div>
                             </div>
                         </div>
 
                         <div class="gallery-column">
                             <div class="card card-lg">
                                 <span class="badge">Избранные</span>
-                                <img src="https://images.unsplash.com/photo-1508610048659-a06b669e3321?q=80&w=500&auto=format&fit=crop" alt="Delphinium Cobalt Dreams">
+                                <img src="assets/photo_2026-06-21_17-47-11.jpg" alt="Delphinium Cobalt Dreams">
                                 <div class="card-content">
                                     <h3>Cobalt Dreams</h3>
                                     <p>Сеянец новозеландского гибрида 1-го поколения готовый к высадке в мае, цветение наступает в год посадки...</p>
