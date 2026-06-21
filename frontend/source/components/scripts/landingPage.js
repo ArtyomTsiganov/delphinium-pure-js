@@ -82,7 +82,6 @@ const landingPage = parseHTML(`
     <div class="rolling-zone">
         <div class="rolling-header">
             <p>Наши книги</p>
-            <button class="rolling-view-all-btn">посмотреть все книги</button>
         </div>
 
         <button class="rolling-btn rolling-left-btn">←</button>
