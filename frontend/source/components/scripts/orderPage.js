@@ -2,6 +2,7 @@ import {api, parseHTML, toMoney} from "./api.js";
 import {renderMainLoading, renderMainWith} from "./mainRender.js";
 import {navigateTo} from "./navigation.js";
 
+import {OrderStatuses} from "../../constants.js"
 
 const orderListItem = parseHTML(`
 <div class="order-item">
@@ -214,7 +215,7 @@ async function loadOrdersList() {
     orderPage.querySelector('input[name="zipcode"]').value = orderInfo.postal_code;
     orderPage.querySelector('input[name="address"]').value = orderInfo.address;
     orderPage.querySelector('textarea[name="comment"]').value = orderInfo.comment;
-    orderPage.querySelector('.order-status').textContent = orderInfo.status;
+    orderPage.querySelector('.order-status').textContent = OrderStatuses[orderInfo.status];
 }
 
 export async function renderOrderListPage() {
