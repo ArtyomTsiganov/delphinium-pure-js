@@ -30,11 +30,15 @@ export async function revokeOrderId() {
 }
 
 export function getCartItemCount(goodsItemId) {
-    return cart.get(goodsItemId);
+    return parseInt(cart.get(goodsItemId), 10) || 0;
 }
 
 export function setCartItemCount(goodsItemId, count) {
-    cart.set(goodsItemId, count);
+    const normalizedCount = parseInt(count, 10) || 0;
+    if (normalizedCount > 0)
+        cart.set(goodsItemId, normalizedCount);
+    else
+        cart.delete(goodsItemId);
     saveCart();
 }
 
@@ -45,14 +49,14 @@ export function getCartItemsIds() {
 export function addToCartOne(goodsItemId) {
     if (!cart.has(goodsItemId))
         cart.set(goodsItemId, 0);
-    cart.set(goodsItemId, cart.get(goodsItemId) + 1);
+    cart.set(goodsItemId, (parseInt(cart.get(goodsItemId), 10) || 0) + 1);
     saveCart();
 }
 
 export function removeFromCartOne(goodsItemId) {
     if (cart.has(goodsItemId)) {
-        const countItem = cart.get(goodsItemId);
-        if (countItem === 1)
+        const countItem = parseInt(cart.get(goodsItemId), 10) || 0;
+        if (countItem <= 1)
             cart.delete(goodsItemId);
         else
             cart.set(goodsItemId, countItem - 1);

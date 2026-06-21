@@ -505,21 +505,77 @@ footer {
         display: flex;
         flex: 0 0;
         justify-content: space-between;
+        align-items: center;
+        gap: 10px;
         width: stretch;
         
-        button {
+        .product-card-cart-btn {
             background-color: var(--color-white);
             color: var(--color-primary);
             border: 1px solid var(--color-primary);
             border-radius: 5px;
             margin: 0;
             padding: 0 15px;
+            height: 36px;
             font-size: 16px;
             cursor: pointer;
         }
-        button:hover {
+        .product-card-cart-btn:hover {
             background-color: var(--color-primary-dark);
             color: var(--color-primary-soft);
+        }
+
+        .product-card-quantity {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+
+            .quantity-picker {
+                display: flex;
+                align-items: center;
+                background: transparent;
+                border: 1px solid var(--color-primary);
+                border-radius: 5px;
+                height: 36px;
+                overflow: hidden;
+            }
+
+            .qty-btn {
+                background: transparent;
+                border: none;
+                width: 34px;
+                height: 100%;
+                color: var(--color-primary);
+                cursor: pointer;
+                font-size: 16px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .qty-btn:hover {
+                background: rgba(26, 82, 73, 0.05);
+            }
+
+            .qty-input {
+                width: 42px;
+                height: 100%;
+                border: none;
+                background: transparent;
+                color: var(--color-primary);
+                font-size: 16px;
+                text-align: center;
+                padding: 0;
+            }
+
+            .qty-input:focus {
+                outline: none;
+            }
+        }
+
+        .product-card-cart-btn[hidden],
+        .product-card-quantity[hidden] {
+            display: none;
         }
     }
 }
