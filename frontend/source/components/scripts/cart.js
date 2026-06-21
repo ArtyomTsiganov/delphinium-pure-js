@@ -12,6 +12,7 @@ window.addEventListener('pagehide', async () => {
 
 function saveCart() {
     localStorage.setItem("cart", JSON.stringify([...cart.entries()]));
+    window.dispatchEvent(new CustomEvent('cart-updated'));
 }
 
 function setOrderId(id) {
@@ -44,6 +45,10 @@ export function setCartItemCount(goodsItemId, count) {
 
 export function getCartItemsIds() {
     return cart.keys().toArray();
+}
+
+export function getCartTotalCount() {
+    return cart.size;
 }
 
 export function addToCartOne(goodsItemId) {
