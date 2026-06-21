@@ -239,7 +239,7 @@ header {
         align-items: center;
         gap: 8px;
 
-        width: 300px;
+        width: fit-content;
     }
 
     .left {
