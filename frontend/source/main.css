@@ -452,12 +452,17 @@ footer {
 
     .catalog-list {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        grid-template-columns: repeat(auto-fill, 280px);
+        justify-content: start;
         gap: 20px;
 
         width: 100%;
 
         padding: 0 var(--padding-primary) 0 var(--padding-primary);
+
+        .product-card {
+            margin: 0;
+        }
     }
 }
 
