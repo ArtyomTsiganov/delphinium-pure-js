@@ -4,3 +4,4 @@ __pycache__
 .idea
 sent_emails/
 .env
+.history
