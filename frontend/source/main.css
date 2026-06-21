@@ -1701,30 +1701,49 @@ footer {
     }
     
     .rolling-zone {
-        .rolling-header {
-            flex-direction: column;
-            align-items: center;
-
-            p {
-                font-size: 28px;
-                text-align: center;
-            }
-
-            button {
-                font-size: 20px;
-                text-align: center;
-                border: 1px solid var(--color-primary-dark);
-                border-radius: 5px;
-            }
-        }
-        
-        .rolling-btn {
+        &.rolling-zone-scrollable .rolling-btn {
             display: none;
         }
 
-        &.rolling-zone-scrollable {
-            .rolling-btn {
-                display: none;
+        .rolling-header {
+            flex-direction: row; 
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 15px; 
+
+            p {
+                font-size: 24px; 
+                text-align: left;
+            }
+
+            button {
+                font-size: 14px;
+                padding: 6px 12px;
+            }
+        }
+
+        .rolling-list {
+            padding: 0 15px 15px 15px;
+            gap: 15px; 
+            overflow-x: auto; 
+            scroll-behavior: smooth;
+        }
+
+        .product-card {
+            flex: 0 0 150px; 
+            width: 150px;
+            margin: 0;
+            
+            img {
+                height: 160px; 
+            }
+            p {
+                font-size: 14px;
+            }
+            .product-card-bottom {
+                flex-direction: column; 
+                align-items: stretch;
+                gap: 6px;
             }
         }
     }
