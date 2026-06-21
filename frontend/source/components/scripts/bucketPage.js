@@ -156,6 +156,17 @@ const cartPage = parseHTML(`
         </div>
 
     </div>
+
+    <div class="cart-remove-modal" hidden>
+        <div class="cart-remove-dialog" role="dialog" aria-modal="true" aria-labelledby="cart-remove-title">
+            <p id="cart-remove-title" class="cart-remove-title">Удалить товар из корзины?</p>
+            <p class="cart-remove-text"></p>
+            <div class="cart-remove-actions">
+                <button class="cart-remove-cancel action-btn outline">Оставить</button>
+                <button class="cart-remove-confirm action-btn">Удалить</button>
+            </div>
+        </div>
+    </div>
 </div>
 `);
 
@@ -165,6 +176,11 @@ const tabs = cartPage.querySelectorAll('.checkout-step-content');
 const form = cartPage.querySelector('#user-data-form');
 const submitBtn = cartPage.querySelector('.validate-order');
 const cards = new Map();
+const removeModal = cartPage.querySelector('.cart-remove-modal');
+const removeModalText = cartPage.querySelector('.cart-remove-text');
+const removeModalConfirm = cartPage.querySelector('.cart-remove-confirm');
+const removeModalCancel = cartPage.querySelector('.cart-remove-cancel');
+let removeModalState = null;
 
 cartPage.querySelector('.delivery-options').addEventListener('change', (e) => {
     currentDeliveryOptionStatus = e.target.value;
@@ -204,6 +220,40 @@ cartPage.querySelector('.next-step-btn').addEventListener('click', e => {
 cartPage.querySelector('.prev-step-btn').addEventListener('click', async () => {
     changeStep(1);
     await revokeOrderId();
+});
+
+function hideRemoveModal() {
+    removeModal.hidden = true;
+    removeModalState = null;
+}
+
+function showRemoveModal(card, row) {
+    removeModalState = { card, row };
+    removeModalText.textContent = `Позиция "${card.name}" будет удалена из заказа.`;
+    removeModal.hidden = false;
+    removeModalCancel.focus();
+}
+
+removeModalCancel.addEventListener('click', hideRemoveModal);
+removeModal.addEventListener('click', e => {
+    if (e.target === removeModal) {
+        hideRemoveModal();
+    }
+});
+removeModalConfirm.addEventListener('click', () => {
+    if (removeModalState) {
+        removeFromCartAll(removeModalState.card.card_id);
+        cards.delete(removeModalState.card.card_id);
+        removeModalState.row.remove();
+        updateTotal();
+    }
+    hideRemoveModal();
+});
+
+cartPage.addEventListener('keydown', e => {
+    if (!removeModal.hidden && e.key === 'Escape') {
+        hideRemoveModal();
+    }
 });
 
 function updateTotal() {
@@ -324,12 +374,15 @@ async function loadCart() {
             updateTotal();
         });
         clone.querySelector('.qty-btn-rem').addEventListener('click', () => {
-            if (getCartItemCount(card.card_id) > 0) {
+            const currentCount = getCartItemCount(card.card_id);
+            if (currentCount > 1) {
                 removeFromCartOne(card.card_id);
                 countInput.value -= 1;
                 if (getCartItemCount(card.card_id) <= card.count)
                     countInput.classList.remove('invalid');
                 updateTotal();
+            } else if (currentCount === 1) {
+                showRemoveModal(card, clone);
             }
         });
         clone.querySelector('.col-price').textContent = toMoney(card.price);
