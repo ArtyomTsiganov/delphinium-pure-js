@@ -1721,6 +1721,12 @@ footer {
         .rolling-btn {
             display: none;
         }
+
+        &.rolling-zone-scrollable {
+            .rolling-btn {
+                display: none;
+            }
+        }
     }
     
     .hero-inner {
