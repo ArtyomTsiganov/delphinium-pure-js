@@ -108,3 +108,43 @@ async def test_get_cards_with_filter(client):
     data = response.json()
 
     assert len(data) > 0
+
+
+async def test_get_cards_with_cyrillic_case_insensitive_filter(client):
+    await client.post(
+        "/cards/category",
+        json=[
+            {
+                "name": "Цветы"
+            }
+        ]
+    )
+
+    await client.post(
+        "/cards",
+        json=[
+            {
+                "name": "Дельфиниум синий",
+                "category_id": 1,
+                "short_name": "delphinium",
+                "price": 650,
+                "count": 5,
+                "description": "Синий дельфиниум",
+                "image_url": "test.jpg"
+            }
+        ]
+    )
+
+    response = await client.get(
+        "/cards",
+        params={
+            "name_filter": "дельфиниум"
+        }
+    )
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert len(data) == 1
+    assert data[0]["name"] == "Дельфиниум синий"

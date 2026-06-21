@@ -5,6 +5,12 @@ from app.models import Cards, Categories
 from app.schemas.cards import CardCreate, CategoryCreate
 
 
+def _matches_filter(value: str | None, filter_value: str | None) -> bool:
+    if not filter_value:
+        return True
+    return filter_value.casefold() in (value or "").casefold()
+
+
 class CardService:
     @staticmethod
     async def get_all_categories(db: AsyncSession):
@@ -30,21 +36,20 @@ class CardService:
             name_filter: str | None = None,
             category_filter: str | None = None
     ):
-        query = select(Cards).join(Categories)
+        query = select(Cards, Categories.name).join(Categories)
 
         if card_ids:
             query = query.where(Cards.card_id.in_(card_ids))
 
-        if category_filter:
-            query = query.where(Categories.name.ilike(f'%{category_filter}%'))
-
-        if name_filter:
-            query = query.where(Cards.name.ilike(f'%{name_filter}%'))
+        result = await db.execute(query)
+        cards = [
+            card for card, category_name in result.all()
+            if _matches_filter(category_name, category_filter)
+            and _matches_filter(card.name, name_filter)
+        ]
 
         # Логика рандома
         if order_by == 'random':
-            result = await db.execute(query)
-            cards = list(result.scalars().all())
             shuffle(cards)
             return cards[:count]
 
@@ -56,11 +61,10 @@ class CardService:
             'count': Cards.count
         }
         if order_by in sort_fields:
-            query = query.order_by(sort_fields[order_by])
+            sort_field = sort_fields[order_by].key
+            cards.sort(key=lambda card: getattr(card, sort_field))
 
-        query = query.limit(count)
-        result = await db.execute(query)
-        return result.scalars().all()
+        return cards[:count]
 
     @staticmethod
     async def create_cards(db: AsyncSession, cards_in: list[CardCreate]):
